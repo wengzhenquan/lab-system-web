@@ -18,7 +18,7 @@ Vue.config.productionTip = false;
 promise.polyfill();
 Vue.use(iView);
 
-Vue.prototype.BaseConfig = 'http://localhost:8082';
+Vue.prototype.BaseConfig = 'http://localhost:8081';
 
 /* 路由发生变化修改页面title */
 router.beforeEach((to, from, next) => {

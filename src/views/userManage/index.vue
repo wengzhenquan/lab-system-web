@@ -7,16 +7,9 @@
         </Select>
         <div style="width: 270px;margin-left: 3px"><Input search enter-button="搜索" placeholder="输入要查找的内容" v-model="name" @on-click="searchUser"/></div>
       </div>
-      <Router-link to="/index/userIndex/addUser">
-        <Button type="primary">添加用户</Button>
-      </Router-link>
     </div>
     <Table border ref="selection" :columns="columns4" :data="userInfo"></Table>
-    <div style="margin-top: 20px; display: flex;justify-content: space-between">
-      <div>
-        <Button @click="handleSelectAll(true)" type="primary">全选</Button>
-        <Button @click="handleSelectAll(false)">取消全选</Button>
-      </div>
+    <div style="margin-top: 20px; display: flex;justify-content: flex-end">
       <Page :total="total" :key="total" :current.sync="current" @on-change="pageChange" />
     </div>
   </div>
@@ -100,7 +93,7 @@
             }
           }
         ],
-        pageNo: 0,
+        pageNo: 1,
         total:0,
         name: '',
         sortList: [
@@ -215,6 +208,6 @@
 
 <style lang="less" scoped>
   .user-manage {
-    margin-bottom: 20px;display: flex;justify-content: space-between;
+    margin-bottom: 7px;display: flex;justify-content: flex-end;
   }
 </style>

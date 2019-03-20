@@ -16,7 +16,14 @@ export default {
     padding: 0;
     font-size: 14px;
   }
-#app {
-  height: 100vh;
-}
+  a,
+  a:hover {
+    color: #fff;
+  }
+  a:link,
+  a:visited,
+  a:hover,
+  a:active {
+    background-color: #1205ff;
+  }
 </style>
