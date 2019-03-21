@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="user-manage">
-      <div style="display: flex">
+      <div style="display: flex; justify-content: flex-end;margin-top: 10px;margin-bottom: 10px">
         <Select v-model="sortValue" style="width:150px">
           <Option v-for="item in sortList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
@@ -206,8 +206,21 @@
   }
 </script>
 
+<style>
+  .ivu-table th {
+    background-color: #57a3f3;
+    color: #fff;
+    border: none;
+    border-right: 1px solid #2d8cf0;
+    font-size: 15px;
+    letter-spacing: 2px;
+  }
+</style>
+
 <style lang="less" scoped>
   .user-manage {
-    margin-bottom: 7px;display: flex;justify-content: flex-end;
+    margin-bottom: 7px;
+    display: flex;
+    justify-content: flex-end;
   }
 </style>

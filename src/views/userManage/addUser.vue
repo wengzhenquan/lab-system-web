@@ -1,6 +1,6 @@
 <template>
     <div>
-      身份权限
+      增加用户
     </div>
 </template>
 
@@ -10,10 +10,14 @@
             return {}
         },
 
-        methods: {}
+        created() {
+
+        },
+
+        methods: {},
     }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 
 </style>

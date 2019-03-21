@@ -12,27 +12,30 @@
           <div>实验室系统</div>
           <div></div>
         </div>
-        <div style="background-color: #2d8cf0">
+        <div style="background-color: #2d8cf0;">
           <div class="nav">
-            <MenuItem name="1">
-              首页
-            </MenuItem>
             <Router-link to="/homePage">
-              <MenuItem name="2">
-                账户管理
-              </MenuItem>
+              <MenuItem name="1">首页</MenuItem>
             </Router-link>
-            <MenuItem name="3">
-              实验室管理
-            </MenuItem>
-            <MenuItem name="4">
-              设备管理
-            </MenuItem>
+            <Router-link to="/homePage">
+              <MenuItem name="2">账户管理</MenuItem>
+            </Router-link>
+            <Router-link to="/homePage">
+              <MenuItem name="3">教务管理</MenuItem>
+            </Router-link>
+            <Router-link to="/homePage">
+              <MenuItem name="4">实验室管理</MenuItem>
+            </Router-link>
+            <Router-link to="/homePage">
+              <MenuItem name="5">设备管理</MenuItem>
+            </Router-link>
+            <Router-link to="/homePage">
+              <MenuItem name="6">设备采购</MenuItem>
+            </Router-link>
           </div>
         </div>
-
         <Card>
-          <div style="min-height: 700px; width: 80%;margin: 0 auto;">
+          <div style="width: 80%;margin: 0 auto;">
             <router-view/>
           </div>
         </Card>
@@ -119,4 +122,8 @@
     font-size: 14px;
     color: #fff;
   }
+a,
+a:hover {
+  color: #fff;
+}
 </style>
