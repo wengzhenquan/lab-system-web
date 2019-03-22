@@ -4,21 +4,13 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
-    loginInfo: ''
+    loginInfo: localStorage.getItem('loginInfo')
   },
   getters: {
-    getStorage:function (state) {
-      if(!state.loginInfo) {
-        state.loginInfo = JSON.parse(localStorage.getItem('loginInfo'))
-      }
-      return state.loginInfo
-    }
+
   },
   mutations: {
-    getLoginInfo(state,data){
-      state.loginInfo = data;
-      localStorage.setItem('loginInfo', JSON.stringify(data));
-    }
+
   },
 })
 

@@ -35,6 +35,12 @@
             let level;
             if(that.levelValue === '系统管理员') {
               level = 0;
+            } else if(that.levelValue === '设备管理员') {
+              level = 2;
+            } else if(that.levelValue === '教师') {
+              level = 1;
+            } else if(that.levelValue === '学生') {
+              level = 3;
             }
             let params = {
               userName: that.userName,
@@ -48,7 +54,7 @@
                 console.log(res);
                 if(res.data.retCode === 0) {
                   //把登录信息缓存起来vuex-localStorage
-                  that.$store.commit('getLoginInfo', res.data.data);
+                  localStorage.setItem('loginInfo', JSON.stringify(res.data.data));
                   that.$router.push({
                     path: '/homePage',
                   })
