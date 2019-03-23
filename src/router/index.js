@@ -14,6 +14,17 @@ import experimentReport from "@/views/teachManage/experimentReport";  //实验�
 import studentManage from "@/views/teachManage/studentManage";        //学生管理
 import scoreManage from "@/views/teachManage/scoreManage";            //成绩管理
 
+import labIndex from "@/views/labManage";                       // 实验室
+import labManage from "@/views/labManage/labManage";            // 实验室管理
+import labApply from "@/views/labManage/labApply";              // 实验室申请
+import labApproval from "@/views/labManage/labApproval";        // 实验室审批
+
+import deviceIndex from "@/views/deviceManage";                  // 设备
+import devManage from "@/views/deviceManage/devManage";          // 设备管理
+import devUseManage from "@/views/deviceManage/devUseManage";    // 设备使用与分配
+import devStock from "@/views/deviceManage/devStock";            // 库存管理
+import devApply from "@/views/deviceManage/devApply";            // 设备申请
+
 Vue.use(Router)
 
 export default new Router({
@@ -99,7 +110,73 @@ export default new Router({
               title: '成绩管理'
             },
           ]
-        }
+        },
+        {
+          path: '/labIndex',
+          name: 'labIndex',
+          component: labIndex,
+          children: [
+            {
+              path: '',
+              name: 'labManage',
+              component: labManage
+            },
+            {
+              path: '/labManage',
+              name: 'labManage',
+              component: labManage,
+              title: '实验室管理'
+            },
+            {
+              path: '/labApply',
+              name: 'labApply',
+              component: labApply,
+              title: '实验室申请'
+            },
+            {
+              path: '/labApproval',
+              name: 'labApproval',
+              component: labApproval,
+              title: '实验室审批'
+            },
+          ]
+        },
+        {
+          path: '/deviceIndex',
+          name: 'deviceIndex',
+          component: deviceIndex,
+          children: [
+            {
+              path: '',
+              name: 'devManage',
+              component: devManage
+            },
+            {
+              path: '/devManage',
+              name: 'devManage',
+              component: devManage,
+              title: '设备管理'
+            },
+            {
+              path: '/devUseManage',
+              name: 'devUseManage',
+              component: devUseManage,
+              title: '设备使用与分配'
+            },
+            {
+              path: '/devStock',
+              name: 'devStock',
+              component: devStock,
+              title: '库存管理'
+            },
+            {
+              path: '/devApply',
+              name: 'devApply',
+              component: devApply,
+              title: '设备申请'
+            },
+          ]
+        },
       ]
     }
   ]

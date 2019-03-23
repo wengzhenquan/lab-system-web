@@ -176,7 +176,7 @@
             let params = {
               pageNo: that.pageNo,
               pageSize: 10,
-              // teacherUserId  要区分老师和管理要，老师加上id
+              // teacherUserId  要区分老师和其他，老师加上id
             };
             let data = null;
             that

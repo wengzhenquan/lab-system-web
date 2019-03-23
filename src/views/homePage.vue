@@ -23,15 +23,15 @@
             <Router-link to="/teachIndex">
               <MenuItem name="3">教务管理</MenuItem>
             </Router-link>
-            <Router-link to="/homePage">
+            <Router-link to="/labIndex">
               <MenuItem name="4">实验室管理</MenuItem>
             </Router-link>
-            <Router-link to="/homePage">
+            <Router-link to="/deviceIndex">
               <MenuItem name="5">设备管理</MenuItem>
             </Router-link>
-            <Router-link to="/homePage">
-              <MenuItem name="6">设备采购</MenuItem>
-            </Router-link>
+            <!--<Router-link to="/homePage">-->
+              <!--<MenuItem name="6">设备采购</MenuItem>-->
+            <!--</Router-link>-->
           </div>
         </div>
         <Card>
