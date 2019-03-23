@@ -422,21 +422,6 @@
   }
 </script>
 
-<style>
-  .ivu-table th {
-    background-color: #57a3f3;
-    color: #fff;
-    border: none;
-    border-right: 1px solid #2d8cf0;
-    font-size: 15px;
-    letter-spacing: 2px;
-  }
-  .ivu-select-selection,
-  .ivu-input {
-    border-color: #b2b4b7;
-  }
-</style>
-
 <style lang="less" scoped>
   .user-manage {
     display: flex;

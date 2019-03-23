@@ -17,10 +17,10 @@
             <Router-link to="/homePage">
               <MenuItem name="1">首页</MenuItem>
             </Router-link>
-            <Router-link to="/homePage">
+            <Router-link to="/userIndex">
               <MenuItem name="2">账户管理</MenuItem>
             </Router-link>
-            <Router-link to="/homePage">
+            <Router-link to="/teachIndex">
               <MenuItem name="3">教务管理</MenuItem>
             </Router-link>
             <Router-link to="/homePage">

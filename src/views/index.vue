@@ -14,33 +14,15 @@
         <!--教务管理-->
         <!--<Menu active-name="1-2" :open-names="['2']">-->
           <!--<MenuItem name="1" style="color:#fff;background: #2d8cf0;">教务管理</MenuItem>-->
-          <!--<Submenu name="2">-->
-            <!--<template slot="title">-->
-              <!--<Icon type="ios-filing" />-->
-              <!--课程管理-->
-            <!--</template>-->
-            <!--<Router-link to="/userIndex"><MenuItem name="2-1">课程列表</MenuItem></Router-link>-->
-            <!--<Router-link to="/addUser"><MenuItem name="2-2">添加课程</MenuItem></Router-link>-->
-            <!--<Router-link to="/userIndex"><MenuItem name="2-3">修改课程</MenuItem></Router-link>-->
-            <!--<Router-link to="/userIndex"><MenuItem name="2-4">删除课程</MenuItem></Router-link>-->
-          <!--</Submenu>-->
-          <!--<Submenu name="3">-->
-            <!--<template slot="title">-->
-              <!--<Icon type="ios-filing" />-->
-              <!--实验课题-->
-            <!--</template>-->
-            <!--<Router-link to="/userIndex"><MenuItem name="3-1">我的实验课题</MenuItem></Router-link>-->
-            <!--<Router-link to="/userIndex"><MenuItem name="3-2">添加实验课题</MenuItem></Router-link>-->
-            <!--<Router-link to="/userIndex"><MenuItem name="3-3">修改实验课题</MenuItem></Router-link>-->
-            <!--<Router-link to="/userIndex"><MenuItem name="3-4">删除实验课题</MenuItem></Router-link>-->
-          <!--</Submenu>-->
-          <!--<Submenu name="4">-->
-            <!--<template slot="title">-->
-              <!--<Icon type="ios-filing" />-->
-              <!--实验报告-->
-            <!--</template>-->
-            <!--<Router-link to="/userIndex"><MenuItem name="3-1">我的实验报告</MenuItem></Router-link>-->
-          <!--</Submenu>-->
+          <!--<Router-link to="/userIndex">-->
+            <!--<MenuItem name="2"><Icon type="ios-filing" />课程管理</MenuItem>-->
+          <!--</Router-link>-->
+          <!--<Router-link to="/userIndex">-->
+            <!--<MenuItem name="3"><Icon type="ios-filing" />实验课题</MenuItem>-->
+          <!--</Router-link>-->
+          <!--<Router-link to="/userIndex">-->
+            <!--<MenuItem name="4"><Icon type="ios-filing" />实验报告</MenuItem>-->
+          <!--</Router-link>-->
         <!--</Menu>-->
         <!--实验室管理-->
         <!--<Menu active-name="1-2" :open-names="['2']">-->

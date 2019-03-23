@@ -4,7 +4,7 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
-    loginInfo: localStorage.getItem('loginInfo')
+    loginInfo: JSON.parse(localStorage.getItem('loginInfo'))
   },
   getters: {
 
