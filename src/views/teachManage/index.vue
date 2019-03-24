@@ -13,12 +13,16 @@
          <Router-link to="/experimentReport">
            <MenuItem name="4"><Icon type="ios-filing" />实验报告</MenuItem>
          </Router-link>
+        <!--学生管理只有老师可以进-->
          <Router-link to="/studentManage">
            <MenuItem name="5"><Icon type="ios-filing" />学生管理</MenuItem>
          </Router-link>
          <Router-link to="/scoreManage">
            <MenuItem name="6"><Icon type="ios-filing" />成绩管理</MenuItem>
          </Router-link>
+        <Router-link to="/choiceCManage">
+          <MenuItem name="7"><Icon type="ios-filing" />选课管理</MenuItem>
+        </Router-link>
       </Menu>
     </div>
     <div style="margin-left: 10px;height: 700px;background-color: #fff;border-radius: 5px;padding: 12px;width: 86%;border: 1px solid #b7b7b7">

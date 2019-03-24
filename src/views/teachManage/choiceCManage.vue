@@ -1,20 +1,11 @@
 <template>
   <div>
-    <div class="user-manage" style="justify-content: flex-end" >
-      <Button type="primary" style="height: 33px;margin-top: 10px;" @click="isAdd = true">添加课程</Button>
-    </div>
-    <div style="display:flex;margin-bottom: 8px;margin-top: 8px">
-      <div style="width: 40%">
-        课程名称：
-        <Select v-model="formItem.courseId" style="width:170px" @on-change="choiceCource">
-          <Option v-for="item in courList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+    <div class="user-manage">
+      <div style="display: flex; justify-content: flex-end;margin-top: 10px;margin-bottom: 10px">
+        <Select v-model="sortValue" style="width:150px">
+          <Option v-for="item in sortList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
-      </div>
-      <div>
-        实验课题：
-        <Select v-model="formItem.courseId" style="width:170px">
-          <Option v-for="item in courList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-        </Select>
+        <div style="width: 270px;margin-left: 3px"><Input search enter-button="搜索" placeholder="输入要查找的内容" v-model="name" /></div>
       </div>
     </div>
     <Table border ref="selection" :columns="columns4" :data="courceList"></Table>
@@ -22,23 +13,17 @@
       <Page :total="total" :key="total" :current.sync="current" @on-change="pageChange" />
     </div>
 
-    <!--添加课程-->
+    <!--选课-->
     <Modal
-      v-model="isAdd"
-      title="添加课程"
-      @on-ok="addCource"
-      @on-cancel="cancel">
+      v-model="isChoice"
+      title="加入此课程"
+      @on-ok="ChoiceC"
+      >
       <div>
-        <Form :model="formItem" :label-width="80">
-          <FormItem label="课程名称：">
-            <Input v-model="formItem.courseName"></Input>
-          </FormItem>
-          <FormItem label="课程学分：">
-            <Input v-model="formItem.totalScore"></Input>
-          </FormItem>
-        </Form>
+        {{cList}}
       </div>
     </Modal>
+
   </div>
 </template>
 
@@ -48,6 +33,7 @@
       return {
         current: 1,
         courceList: [],     //课程列表
+        cList: '',           //某个课程信息
         pageNo: 1,
         total: 0,
         sortList: [
@@ -99,22 +85,16 @@
                   },
                   on: {
                     click: () => {
-
+                      this.isChoice = true;
+                      this.cList = params.row;
                     }
                   }
-                }, '编辑'),
+                }, '选课'),
               ]);
             }
           }
         ],
-        isAdd: false,
-        formItem: {
-          courseName: '',
-          totalScore: null,
-          startDate: '',
-          endDate: '',
-          teacherUserId: this.$store.state.loginInfo.userId,
-        }
+        isChoice: false,
       }
     },
 
@@ -128,14 +108,13 @@
         this.pageNo = val;
         this.getInfo();
       },
-      //获取此用户开设的课程列表
+      //获取课程列表
       getCourceList() {
         let that = this;
         let url = that.BaseConfig + '/selectCourseAll';
         let params = {
-          pageNo: that.pageNo1,
+          pageNo: that.pageNo,
           pageSize: 10,
-          teacherUserId: that.$store.state.loginInfo.userId,
         };
         let data = null;
         that
@@ -143,19 +122,8 @@
           .then(res => {
             data = res.data;
             if(data.retCode === 0) {
-              that.courceList = that.courceList.concat(data.data.data);
-              if(that.courceList < data.data.total) {
-                that.pageNo1++;
-                that.getCourceList();
-              } else {
-                that.courceList.map(item=> {
-                  that.courList.push({
-                    value: item.id,
-                    label: item.courseName
-                  })
-                })
-                console.log(1,that.courList)
-              }
+              that.courceList = data.data.data;
+              that.total = data.data.total;
             } else {
               that.$Message.error(data.retMsg);
             }
@@ -165,30 +133,11 @@
           })
       },
 
-      //添加课程
-      addCource() {
-        let that = this;
-        let url = that.BaseConfig + '/insertCourse';
-        let data = that.formItem;
-        that
-          .$http(url,'', data, 'post')
-          .then(res => {
-            console.log('创建课程', res);
-            if(data.retCode === 0) {
+      //加入课程
+      ChoiceC() {
 
-            } else {
-              that.$Message.error(data.retMsg);
-            }
-          })
-          .catch(err => {
-            that.$Message.error('请求错误');
-          })
       },
 
-      //取消
-      cancel() {
-        console.log(new Date())
-      },
     }
   }
 </script>

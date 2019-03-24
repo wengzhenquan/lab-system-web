@@ -13,6 +13,7 @@ import experimentTask from "@/views/teachManage/experimentTask";      //实验�
 import experimentReport from "@/views/teachManage/experimentReport";  //实验报告管理
 import studentManage from "@/views/teachManage/studentManage";        //学生管理
 import scoreManage from "@/views/teachManage/scoreManage";            //成绩管理
+import choiceCManage from "@/views/teachManage/choiceCManage"; //选课管理
 
 import labIndex from "@/views/labManage";                       // 实验室
 import labManage from "@/views/labManage/labManage";            // 实验室管理
@@ -108,6 +109,12 @@ export default new Router({
               name: 'scoreManage',
               component: scoreManage,
               title: '成绩管理'
+            },
+            {
+              path: '/choiceCManage',
+              name: 'choiceCManage',
+              component: choiceCManage,
+              title: '选课管理'
             },
           ]
         },
