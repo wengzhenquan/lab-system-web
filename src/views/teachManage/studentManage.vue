@@ -5,10 +5,24 @@
       <Select v-model="courseId" style="width:170px" @on-change="choiceCource">
         <Option v-for="item in courList" :value="item.value" :key="item.value">{{ item.label }}</Option>
       </Select>
+      <Button type="primary" style="height: 30px;margin-left: 10px" @click="isAdd = true">添加学生</Button>
     </div>
     <Table border ref="selection" :columns="columns4" :data="studentList"></Table>
     <div style="margin-top: 20px; display: flex;justify-content: flex-end">
       <Page :total="total" :key="total" :current.sync="current" @on-change="pageChange" />
+    </div>
+
+    <!--添加学生-->
+    <div v-if="level === 1">
+      <Modal
+        v-model="isAdd"
+        title="添加课程"
+        @on-ok="addStudent"
+        >
+        <div>
+
+        </div>
+      </Modal>
     </div>
   </div>
 </template>
@@ -33,14 +47,22 @@
           },
         ],
         courceList: [],
-        courList: '',      //此教师开设的课程列表
+        courList: [],      //此教师开设的课程列表
         courseId: null,
+        level: null,
+        isAdd:false,     //添加学生进课程modal框
       }
     },
 
     created() {
-      this.getStudentList();
-      this.getCourceList();
+      this.level = this.$store.state.loginInfo.level;
+      this.courseId = this.$route.query.courseId;
+      if(this.courseId === undefined || this.courseId === null) {
+        this.$Message.warning('请先选择课程')
+      } else {
+        this.getStudentList();  //获取某课程的学生列表
+      }
+      this.getCourceList();    //获取此教师开设的课程列表
     },
 
     methods: {
@@ -49,12 +71,13 @@
         this.pageNo = val;
         this.getInfo();
       },
-      //获取学生列表
+
+      //获取某课程的学生列表
       getStudentList() {
         let that = this;
-        let url = that.BaseConfig + '/selectTeacherByStudentId';
+        let url = that.BaseConfig + '/selectStudentByCourseId';
         let params = {
-          teacherUserId: that.$store.state.loginInfo.userId,
+          courseId: that.courseId,
           pageNo: that.pageNo,
           pageSize: 10,
         };
@@ -76,7 +99,7 @@
           })
       },
 
-      //获取此用户开设的课程列表
+      //获取此教师开设的课程列表
       getCourceList() {
         let that = this;
         let url = that.BaseConfig + '/selectCourseAll';
@@ -95,15 +118,13 @@
               if(that.courceList < data.data.total) {
                 that.pageNo1++;
                 that.getCourceList();
-              } else {
-                that.courceList.map(item=> {
-                  that.courList.push({
-                    value: item.id,
-                    label: item.courseName
-                  })
-                })
-                console.log(1,that.courList)
               }
+              that.courceList.map(item=> {
+                that.courList.push({
+                  value: item.id,
+                  label: item.courseName
+                })
+              })
             } else {
               that.$Message.error(data.retMsg);
             }
@@ -111,6 +132,11 @@
           .catch(err => {
             that.$Message.error('请求错误');
           })
+      },
+
+      //添加学生进课程
+      addStudent() {
+
       },
 
       choiceCource() {

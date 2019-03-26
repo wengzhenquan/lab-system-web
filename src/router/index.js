@@ -2,7 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import login from "@/views/login";                     //登录页
-import homePage from "@/views/homePage";               //首页
+import homePage from "@/views/homePage";
+import home from "@/views/home";                        //首页
 import index from "@/views/index";                     //主题内容
 import userIndex from "@/views/userManage/index";      //用户管理-用户列表
 import identityList from "@/views/userManage/identityList";  //身份列表
@@ -44,10 +45,15 @@ export default new Router({
       path: '/homePage',
       name: 'homePage',
       component: homePage,
-      title: '首页',
       children: [
         {
-          path: '',
+          path: '/',
+          name: 'home',
+          component: home,
+          title: '首页'
+        },
+        {
+          path: '/index',
           name: 'index',
           component: index,
           children: [

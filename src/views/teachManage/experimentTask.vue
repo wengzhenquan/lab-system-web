@@ -12,8 +12,8 @@
       </div>
       <div>
         实验教室：
-        <Select v-model="formItem.courseId" style="width:170px">
-          <Option v-for="item in courList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+        <Select v-model="formItem.romId" style="width:170px">
+          <Option v-for="item in roList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
       </div>
     </div>
@@ -24,45 +24,59 @@
 
     <!--添加实验任务-->
     <!--老师才可添加实验任务、且课程必须是此老师所开设的课程-->
+    <div v-if="loginInfo.level === 1">
+      <Modal
+        v-model="isAdd"
+        title="添加实验任务"
+        @on-ok="addTask"
+        @on-cancel="cancel">
+        <div>
+          <Form :model="formItem" :label-width="80">
+            <FormItem label="实验题目：">
+              <Input v-model="formItem.title"></Input>
+            </FormItem>
+            <FormItem label="实验内容：">
+              <Input v-model="formItem.content" type="textarea" :autosize="{minRows: 3,maxRows: 5}"></Input>
+            </FormItem>
+            <FormItem label="课程名称：">
+              <Select v-model="formItem.courseId" style="width:200px">
+                <Option v-for="item in courList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              </Select>
+            </FormItem>
+            <FormItem label="教室编号：">
+              <Input v-model="formItem.numb"></Input>
+            </FormItem>
+            <FormItem label="教室名称：">
+              <Select v-model="formItem.romId" style="width:200px">
+                <Option v-for="item in roList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              </Select>
+            </FormItem>
+            <FormItem label="开始时间：">
+              <Row>
+                <Col span="11">
+                  <DatePicker type="date" placeholder="Select date" v-model="formItem.startDate"></DatePicker>
+                </Col>
+              </Row>
+            </FormItem>
+            <FormItem label="结束时间：">
+              <Row>
+                <Col span="11">
+                  <DatePicker type="date" placeholder="Select date" v-model="formItem.endDate"></DatePicker>
+                </Col>
+              </Row>
+            </FormItem>
+          </Form>
+        </div>
+      </Modal>
+    </div>
+
     <Modal
-      v-model="isAdd"
-      title="添加实验任务"
-      @on-ok="addTask"
-      @on-cancel="cancel">
-      <div>
-        <Form :model="formItem" :label-width="80">
-          <FormItem label="实验题目：">
-            <Input v-model="formItem.title"></Input>
-          </FormItem>
-          <FormItem label="实验内容：">
-            <Input v-model="formItem.content" type="textarea" :autosize="{minRows: 3,maxRows: 5}"></Input>
-          </FormItem>
-          <FormItem label="课程名称：">
-            <Select v-model="formItem.courseId" style="width:200px">
-              <Option v-for="item in courList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-            </Select>
-          </FormItem>
-          <FormItem label="实验教室：">
-            <Select v-model="formItem.romId" style="width:200px">
-              <Option v-for="item in roList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-            </Select>
-          </FormItem>
-          <FormItem label="开始时间：">
-            <Row>
-              <Col span="11">
-                <DatePicker type="date" placeholder="Select date" v-model="formItem.startDate"></DatePicker>
-              </Col>
-            </Row>
-          </FormItem>
-          <FormItem label="结束时间：">
-            <Row>
-              <Col span="11">
-                <DatePicker type="date" placeholder="Select date" v-model="formItem.endDate"></DatePicker>
-              </Col>
-            </Row>
-          </FormItem>
-        </Form>
-      </div>
+      v-model="isRead"
+      title="实验内容"
+      >
+      <p>
+        {{taskContent}}
+      </p>
     </Modal>
 
     <!--修改实验任务-->
@@ -113,11 +127,7 @@
   export default {
     data() {
       return {
-        pageNo: 1,
-        pageNo1: 1,
-        pageNo2: 1,
-        total: 0,
-        current: 1,
+        pageNo: 1, pageNo1: 1, pageNo2: 1, total: 0, current: 1,
         taskList: [],     //课程列表
         courceList: [],
         courList:[],      //此用户（教师）开设的课程列表
@@ -135,6 +145,8 @@
         ],    //查找条件
         sortValue:'',
         name: '',     //查找内容
+        isRead: false,    //实验内容modal框
+        taskContent: '',  //实验内容
         columns4: [
           {
             title: '实验题目',
@@ -142,19 +154,17 @@
           },
           {
             title: '实验内容',
+            align: 'center',
             render: (h, params) => {
               return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'primary',
-                    size: 'small'
-                  },
+                h('p', {
                   style: {
-                    marginRight: '5px'
+                    color: '#2d8cf0'
                   },
                   on: {
                     click: () => {
-
+                      this.isRead = true;
+                      this.taskContent = params.row.content;
                     }
                   }
                 }, '查看'),
@@ -162,7 +172,11 @@
             }
           },
           {
-            title: '实验教室',
+            title: '教室编号',
+            key: 'numb',
+          },
+          {
+            title: '教室名称',
             key: 'romName',
           },
           {
@@ -223,15 +237,17 @@
     },
 
     created() {
-      this.getCourceList();
-      this.getRomsList();
       // 老师进入要先选择实验课程名称，学生进入可查看所有实验任务
       this.loginInfo = this.$store.state.loginInfo;
-      if(this.loginInfo.level === 1) {
+      this.formItem.courseId = this.$route.query.courseId;
+      console.log(this.formItem.courseId)
+      if((this.formItem.courseId === undefined || this.formItem.courseId === null)&& this.loginInfo.level === 1)  {
         this.$Message.warning('请先选择课程名称');
       } else {
         this.getTaskList();
       }
+      this.getCourceList();
+      this.getRomsList();
     },
 
     methods: {
@@ -241,6 +257,7 @@
         this.getInfo();
       },
 
+      //选择课程，显示对应已有的实验任务
       choiceCource(){
         this.getTaskList();
       },
@@ -287,7 +304,7 @@
         let that = this;
         let url = that.BaseConfig + '/selectRomsAll';
         let data = {
-          pageNo: that.pageNo,
+          pageNo2: that.pageNo2,
           pageSize: 10,
           state: 0
         };
@@ -308,8 +325,6 @@
                   })
                 })
               }
-            }else {
-              that.$Message.error(res.data.retMsg);
             }
           })
           .catch(err => {
@@ -322,7 +337,7 @@
         let that = this;
         let url = that.BaseConfig + '/selectExpTeskAll';
         let params;
-        if(that.loginInfo.level === 1) {
+        if(that.loginInfo.level === 1 || (this.formItem.courseId !== undefined && this.formItem.courseId !== null)) {
           params = {
             courseId: that.formItem.courseId,
             pageNo: that.pageNo,
@@ -334,7 +349,6 @@
             pageSize: 10,
           }
         }
-
         let data = null;
         that
           .$http(url, params, data, 'get')
@@ -357,15 +371,17 @@
       addTask() {
         let that = this;
         let url = that.BaseConfig + '/insertExpTesk';
+        that.formItem.startDate = new Date(that.formItem.startDate).getTime();
+        that.formItem.endDate = new Date(that.formItem.endDate).getTime();
         let data = that.formItem;
+        console.log(data)
         that
           .$http(url,'', data, 'post')
           .then(res => {
+            console.log('添加实验任务', res);
             if(res.data.retCode === 0) {
               that.$Message.success('添加实验任务成功');
               that.getTaskList();
-            } else {
-              that.$Message.error(res.data.retMsg);
             }
           })
           .catch(err => {
@@ -377,6 +393,8 @@
       editTask() {
         let that = this;
         let url = that.BaseConfig + '/updateExpTesk';
+        that.formItem.startDate = new Date(that.formItem.startDate).getTime();
+        that.formItem.endDate = new Date(that.formItem.endDate).getTime();
         let data = that.formItem;
         that
           .$http(url,'', data, 'post')

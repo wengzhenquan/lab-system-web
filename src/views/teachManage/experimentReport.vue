@@ -1,12 +1,12 @@
 <template>
   <div>
     <div class="user-manage" style="justify-content: flex-end" >
-      <Button type="primary" style="height: 33px;margin-top: 10px;" @click="isAdd = true">添加课程</Button>
+      <Button type="primary" style="height: 33px;margin-top: 10px;" @click="isAdd = true">添加实验报告</Button>
     </div>
     <div style="display:flex;margin-bottom: 8px;margin-top: 8px">
       <div style="width: 40%">
         课程名称：
-        <Select v-model="formItem.courseId" style="width:170px" @on-change="choiceCource">
+        <Select v-model="formItem.courseId" style="width:170px">
           <Option v-for="item in courList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
       </div>
@@ -47,7 +47,8 @@
     data() {
       return {
         current: 1,
-        courceList: [],     //课程列表
+        courceList: [],
+        courList: [],    //课程列表
         pageNo: 1,
         total: 0,
         sortList: [
@@ -114,7 +115,7 @@
           startDate: '',
           endDate: '',
           teacherUserId: this.$store.state.loginInfo.userId,
-        }
+        },
       }
     },
 
@@ -128,6 +129,7 @@
         this.pageNo = val;
         this.getInfo();
       },
+
       //获取此用户开设的课程列表
       getCourceList() {
         let that = this;

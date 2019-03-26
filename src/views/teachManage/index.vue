@@ -14,7 +14,7 @@
            <MenuItem name="4"><Icon type="ios-filing" />实验报告</MenuItem>
          </Router-link>
         <!--学生管理只有老师可以进-->
-         <Router-link to="/studentManage">
+         <Router-link to="/studentManage" v-if="level === 1">
            <MenuItem name="5"><Icon type="ios-filing" />学生管理</MenuItem>
          </Router-link>
          <Router-link to="/scoreManage">
@@ -34,10 +34,14 @@
 <script>
   export default {
     data() {
-      return {}
+      return {
+        level: null,
+      }
     },
 
-    methods: {}
+    created() {
+      this.level = this.$store.state.loginInfo.level;
+    }
   }
 </script>
 

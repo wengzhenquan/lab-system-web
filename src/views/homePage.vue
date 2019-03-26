@@ -17,7 +17,7 @@
             <Router-link to="/homePage">
               <MenuItem name="1">首页</MenuItem>
             </Router-link>
-            <Router-link to="/userIndex">
+            <Router-link to="/userIndex" v-if="level === 0">
               <MenuItem name="2">账户管理</MenuItem>
             </Router-link>
             <Router-link to="/teachIndex">
@@ -48,8 +48,14 @@
 <script>
     export default {
         data() {
-            return {}
+            return {
+              level: null,  //0-管理员  1-教师  2-设备管理员  3-学生
+            }
         },
+
+      created() {
+          this.level = this.$store.state.loginInfo.level;
+      },
 
         methods: {}
     }
