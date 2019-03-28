@@ -10,11 +10,19 @@ import identityList from "@/views/userManage/identityList";  //身份列表
 
 import teachIndex from "@/views/teachManage/index";                   //教务管理
 import teachList from "@/views/teachManage/teachList";                //课程管理
-import experimentTask from "@/views/teachManage/experimentTask";      //实验课题管理
+
+import experimentTask from "@/views/teachManage/experimentTask";      //实验任务管理
+import addTask from "@/views/teachManage/addTask";                    //添加任务
+import taskInfo from "@/views/teachManage/taskInfo";                  //查看任务
+import editTask from "@/views/teachManage/editTask"                   //编辑实验任务
+
 import experimentReport from "@/views/teachManage/experimentReport";  //实验报告管理
+import addReport from "@/views/teachManage/addReport";                //添加实验报告
+import editReport from "@/views/teachManage/editReport";              //修改实验报告
+import reportInfo from "@/views/teachManage/reportInfo";              //查看实验报告
+
 import studentManage from "@/views/teachManage/studentManage";        //学生管理
 import scoreManage from "@/views/teachManage/scoreManage";            //成绩管理
-import choiceCManage from "@/views/teachManage/choiceCManage"; //选课管理
 
 import labIndex from "@/views/labManage";                       // 实验室
 import labManage from "@/views/labManage/labManage";            // 实验室管理
@@ -96,13 +104,49 @@ export default new Router({
               path: '/experimentTask',
               name: 'experimentTask',
               component: experimentTask,
-              title: '实验课题管理'
+              title: '实验任务管理'
+            },
+            {
+              path: '/addTask',
+              name: 'addTask',
+              component: addTask,
+              title: '添加实验任务'
+            },
+            {
+              path: '/taskInfo',
+              name: 'taskInfo',
+              component: taskInfo,
+              title: '查看实验任务'
+            },
+            {
+              path: '/editTask',
+              name: 'editTask',
+              component: editTask,
+              title: '编辑实验任务'
             },
             {
               path: '/experimentReport',
               name: 'experimentReport',
               component: experimentReport,
               title: '实验报告管理'
+            },
+            {
+              path: '/addReport',
+              name: 'addReport',
+              component: addReport,
+              title: '添加实验报告'
+            },
+            {
+              path: '/editReport',
+              name: 'editReport',
+              component: editReport,
+              title: '实验报告信息'
+            },
+            {
+              path: '/reportInfo',
+              name: 'reportInfo',
+              component: reportInfo,
+              title: '查看实验报告'
             },
             {
               path: '/studentManage',
@@ -115,12 +159,6 @@ export default new Router({
               name: 'scoreManage',
               component: scoreManage,
               title: '成绩管理'
-            },
-            {
-              path: '/choiceCManage',
-              name: 'choiceCManage',
-              component: choiceCManage,
-              title: '选课管理'
             },
           ]
         },

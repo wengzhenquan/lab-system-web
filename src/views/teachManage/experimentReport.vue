@@ -1,12 +1,9 @@
 <template>
   <div>
-    <div class="user-manage" style="justify-content: flex-end" >
-      <Button type="primary" style="height: 33px;margin-top: 10px;" @click="isAdd = true">添加实验报告</Button>
-    </div>
     <div style="display:flex;margin-bottom: 8px;margin-top: 8px">
       <div style="width: 40%">
         课程名称：
-        <Select v-model="formItem.courseId" style="width:170px">
+        <Select v-model="formItem.courseId" style="width:170px" @on-change="choiceCource">
           <Option v-for="item in courList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
       </div>
@@ -17,28 +14,10 @@
         </Select>
       </div>
     </div>
-    <Table border ref="selection" :columns="columns4" :data="courceList"></Table>
+    <Table border ref="selection" :columns="columns4" :data="reportList"></Table>
     <div style="margin-top: 20px; display: flex;justify-content: flex-end">
       <Page :total="total" :key="total" :current.sync="current" @on-change="pageChange" />
     </div>
-
-    <!--添加课程-->
-    <Modal
-      v-model="isAdd"
-      title="添加课程"
-      @on-ok="addCource"
-      @on-cancel="cancel">
-      <div>
-        <Form :model="formItem" :label-width="80">
-          <FormItem label="课程名称：">
-            <Input v-model="formItem.courseName"></Input>
-          </FormItem>
-          <FormItem label="课程学分：">
-            <Input v-model="formItem.totalScore"></Input>
-          </FormItem>
-        </Form>
-      </div>
-    </Modal>
   </div>
 </template>
 
@@ -46,48 +25,64 @@
   export default {
     data() {
       return {
-        current: 1,
+        current: 1, pageNo: 1,pageNo1: 1, total: 0,
         courceList: [],
         courList: [],    //课程列表
-        pageNo: 1,
-        total: 0,
-        sortList: [
-          {
-            value: 'userName',
-            label: '学号'
-          },
-          {
-            value: 'name',
-            label: '姓名'
-          },
-        ],    //查找条件
-        sortValue:'',
-        name: '',     //查找内容
+        reportList: [],  //实验报告列表
+        formItem: {
+          courseId: '',
+          score: null,
+          teskId: null,           //不能为空
+          studentUserId: null,    //不能为空
+          updateTime: '',         //学生更新实验报告的时间
+        },
         columns4: [
           {
-            title: '课程名',
+            title: '实验标题',
+            key: 'title'
+          },
+          {
+            title: '报告内容',
+            align: 'center',
+            render: (h, params) => {
+              return h('div', [
+                h('p', {
+                  style: {
+                    color: '#2d8cf0',
+                  },
+                  on: {
+                    click: () => {
+                      this.$router.push({
+                        path: './reportInfo',
+                        query: {
+                          expReportId: params.row.id
+                        }
+                      });
+                    }
+                  }
+                }, '查看'),
+              ]);
+            }
+          },
+          {
+            title: '所属课程',
             key: 'courseName'
           },
           {
-            title: '学分',
-            key: 'totalScore'
+            title: '提交时间',
+            key: 'updateTime'
           },
           {
-            title: '开始时间',
-            key: 'startDate'
+            title: '学生',
+            key: 'name'
           },
           {
-            title: '结束时间',
-            key: 'endDate'
-          },
-          {
-            title: '课任老师',
-            key: 'name',
+            title: '得分',
+            key: 'score',
           },
           {
             title: '操作',
             key: 'action',
-            align: 'center',
             render: (h, params) => {
               return h('div', [
                 h('Button', {
@@ -96,38 +91,52 @@
                     size: 'small'
                   },
                   style: {
-                    marginRight: '5px'
+                    marginRight: '5px',
+                    display: this.$store.state.loginInfo.level === 1?'block':'none',
                   },
                   on: {
                     click: () => {
-
+                      console.log(h,params)
                     }
                   }
-                }, '编辑'),
+                }, '评分'),
+                h('Button', {
+                  props: {
+                    type: 'primary',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px',
+                    display: this.$store.state.loginInfo.level === 3?'block':'none',
+                  },
+                  on: {
+                    click: () => {
+                      console.log(h,params)
+                    }
+                  }
+                }, '修改'),
               ]);
             }
           }
         ],
-        isAdd: false,
-        formItem: {
-          courseName: '',
-          totalScore: null,
-          startDate: '',
-          endDate: '',
-          teacherUserId: this.$store.state.loginInfo.userId,
-        },
       }
     },
 
     created() {
       this.getCourceList();
+      //如果学生，直接显示学生所提交的实验报告
+
+      this.formItem.studentUserId = this.$route.query.studentUserId;
+      if(this.formItem.studentUserId !== null && this.formItem.studentUserId !== undefined) {
+        this.getReportList();
+      }
     },
 
     methods: {
       //改变页数
       pageChange(val) {
         this.pageNo = val;
-        this.getInfo();
+        this.getReportList();
       },
 
       //获取此用户开设的课程列表
@@ -156,7 +165,6 @@
                     label: item.courseName
                   })
                 })
-                console.log(1,that.courList)
               }
             } else {
               that.$Message.error(data.retMsg);
@@ -167,17 +175,40 @@
           })
       },
 
-      //添加课程
-      addCource() {
-        let that = this;
-        let url = that.BaseConfig + '/insertCourse';
-        let data = that.formItem;
-        that
-          .$http(url,'', data, 'post')
-          .then(res => {
-            console.log('创建课程', res);
-            if(data.retCode === 0) {
+      //选择课程，显示对应已有的实验任务
+      choiceCource(){
+        this.getReportList();
+      },
 
+      //获取某课程下的实验报告列表
+      getReportList() {
+        let that = this;
+        let url = that.BaseConfig + '/selectExpReportAll';
+        let params;
+        if(this.formItem.studentUserId !== null && this.formItem.studentUserId !== undefined) {
+          params = {
+            pageNo: that.pageNo,
+            pageSize: 10,
+            studentUserId: that.formItem.studentUserId,
+          };
+        } else {
+          params = {
+            pageNo: that.pageNo,
+            pageSize: 10,
+            courseId: that.formItem.courseId,
+          };
+        }
+        let data = null;
+        console.log(params)
+        that
+          .$http(url, params, data, 'get')
+          .then(res => {
+            data = res.data;
+            console.log(data)
+            if(data.retCode === 0) {
+              that.reportList = data.data.data;
+              that.total = data.data.total;
+              console.log(data)
             } else {
               that.$Message.error(data.retMsg);
             }
@@ -187,10 +218,6 @@
           })
       },
 
-      //取消
-      cancel() {
-        console.log(new Date())
-      },
     }
   }
 </script>

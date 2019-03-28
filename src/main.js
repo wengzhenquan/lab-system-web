@@ -10,11 +10,17 @@ import { http } from './api/HttpUtils';
 import promise from 'es6-promise';
 import store from './store/store';
 import "@/style/common.less";
+import VueQuillEditor from 'vue-quill-editor';
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
 
 require('./mock.js');
+require('vue-quill-editor');
 Vue.prototype.$axios = Axios;
 Vue.prototype.$http = http;
 Vue.config.productionTip = false;
+Vue.use(VueQuillEditor);
 promise.polyfill();
 Vue.use(iView);
 

@@ -139,7 +139,7 @@
         isAdd: false,
         isEdit: false,
         formItem: {
-          id:null,
+          // id:null,
           numb: '',
           romsName: '',
           content: '',
@@ -188,6 +188,7 @@
       addLab() {
         let that = this;
         let url = that.BaseConfig + '/insertRoms';
+        that.formItem.state = parseInt(that.formItem.state)
         let data = that.formItem;
         console.log(data)
         that

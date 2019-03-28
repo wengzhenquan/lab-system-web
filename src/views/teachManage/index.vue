@@ -8,7 +8,7 @@
            <MenuItem name="2"><Icon type="ios-filing" />课程管理</MenuItem>
         </Router-link>
         <Router-link to="/experimentTask">
-           <MenuItem name="3"><Icon type="ios-filing" />实验课题</MenuItem>
+           <MenuItem name="3"><Icon type="ios-filing" />实验任务</MenuItem>
          </Router-link>
          <Router-link to="/experimentReport">
            <MenuItem name="4"><Icon type="ios-filing" />实验报告</MenuItem>
@@ -20,9 +20,6 @@
          <Router-link to="/scoreManage">
            <MenuItem name="6"><Icon type="ios-filing" />成绩管理</MenuItem>
          </Router-link>
-        <Router-link to="/choiceCManage">
-          <MenuItem name="7"><Icon type="ios-filing" />选课管理</MenuItem>
-        </Router-link>
       </Menu>
     </div>
     <div style="margin-left: 10px;height: 700px;background-color: #fff;border-radius: 5px;padding: 12px;width: 86%;border: 1px solid #b7b7b7">
