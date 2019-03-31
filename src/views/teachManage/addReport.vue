@@ -80,7 +80,14 @@
       },
 
       //清空实验报告并返回上一级
-      ok() {},
+      ok() {
+       this.$router.push({
+         path: '/experimentTask',
+         query: {
+           courseId: this.formItem.courseId
+         }
+       })
+      },
 
     }
   }

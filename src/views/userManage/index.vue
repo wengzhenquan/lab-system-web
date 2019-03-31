@@ -366,14 +366,13 @@
 
       //搜索用户(学号、姓名、身份)
       searchUser() {
-        console.log(1)
         let that = this;
         let url = that.BaseConfig + '/selectUsersAll';
         let params = {
           name: that.name,
           // userName: that.userName,
           // identityName: that.identityName,
-          pageNo: 0,
+          pageNo: 1,
           pageSize: 10,
         };
         let data = null;

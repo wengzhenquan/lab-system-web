@@ -11,15 +11,16 @@
         <!--重新上传按钮仅学生可见-->
         <Upload
           :action="upUrl"
-          :on-success="handleSuccess">
+          :on-success="handleSuccess"
+          v-if="level === 3">
           <Button icon="ios-cloud-upload-outline">重新上传附件</Button>
         </Upload>
       </div>
       <div style="display: flex; justify-content: center">
         <!--重新提交仅学生可见-->
-        <Button type="primary" style="margin-right: 20px;color: #fff" @click="editReport">重新提交</Button>
+        <Button type="primary" style="margin-right: 20px;color: #fff" v-if="level === 3" @click="editReport">重新提交</Button>
         <!--评分仅老师可见-->
-        <Button type="primary" style="margin-right: 20px;color: #fff">评分</Button>
+        <Button type="primary" v-if="level === 1" style="margin-right: 20px;color: #fff">评分</Button>
         <Poptip
           confirm
           title="返回上一级?"
@@ -38,6 +39,7 @@
         expReportId: null,
         editorOption:{},
         upUrl: this.BaseConfig + '/fileUpload',     // 上传文件传入地址
+        level: null,
         formItem: {
           teskId: null,
           courseId: null,
@@ -50,6 +52,7 @@
     },
 
     created() {
+      this.level = this.$store.state.loginInfo.level;
       this.expReportId = this.$route.query.expReportId;
       this.getReportInfo();
     },
@@ -74,7 +77,6 @@
             data = res.data;
             if(data.retCode === 0) {
               that.formItem = data.data;
-              console.log(that.formItem)
             } else {
               that.$Message.error(data.retMsg);
             }
@@ -97,9 +99,6 @@
               that.$Message.success('修改成功');
               that.$router.push({
                 path: './experimentReport',
-                query: {
-                  // courseId: that.formItem.courseId,
-                }
               })
             } else {
               that.$Message.error(res.data.retMsg);
@@ -110,7 +109,9 @@
           })
       },
 
-      ok() {},
+      ok() {
+        this.$router.go(-1);
+      },
 
     }
   }

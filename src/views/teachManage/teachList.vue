@@ -1,7 +1,7 @@
 <template>
     <div>
       <div class="user-manage">
-        <Button type="primary" style="height: 33px;margin-top: 10px;" @click="isAdd = true">添加课程</Button>
+        <div><Button type="primary" style="height: 33px;margin-top: 10px;" @click="isAdd = true" v-if="level === 1">添加课程</Button></div>
         <div style="display: flex; justify-content: flex-end;margin-top: 10px;margin-bottom: 10px">
           <Select v-model="sortValue" style="width:150px">
             <Option v-for="item in sortList" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -10,7 +10,8 @@
         </div>
       </div>
       <div class="col">
-        <Table border ref="selection" :columns="columns4" :data="courceList"></Table>
+        <Table border ref="selection" :columns="columns4" :data="courceList" v-if="level === 1"></Table>
+        <Table border ref="selection" :columns="columnsS" :data="courceList" v-if="level === 3"></Table>
       </div>
       <div style="margin-top: 20px; display: flex;justify-content: flex-end">
         <Page :total="total" :key="total" :current.sync="current" @on-change="pageChange" />
@@ -122,11 +123,7 @@
                   key: 'endDate'
                 },
                 {
-                  title: '课任老师',
-                  key: 'name',
-                },
-                {
-                  title: '实验课题',
+                  title: '实验任务',
                   align: 'center',
                   render: (h, params) => {
                     return h('div', [
@@ -187,19 +184,60 @@
                         },
                         on: {
                           click: () => {
-                            if(this.level === 1) {
-                              this.isEdit = true;
-                              this.formItem.id = params.row.id;
-                              this.getEditItem();
-                            } else {
-                              this.$Message.warning('无权限操作')
-                            }
+                            this.isEdit = true;
+                            this.formItem.id = params.row.id;
+                            this.getEditItem();
                           }
                         }
                       }, '编辑'),
                     ]);
                   }
                 }
+              ],
+              columnsS: [
+                {
+                  title: '课程名',
+                  key: 'courseName'
+                },
+                {
+                  title: '学分',
+                  key: 'totalScore'
+                },
+                {
+                  title: '开始时间',
+                  key: 'startDate'
+                },
+                {
+                  title: '结束时间',
+                  key: 'endDate'
+                },
+                {
+                  title: '课任老师',
+                  key: 'name',
+                },
+                {
+                  title: '实验任务',
+                  align: 'center',
+                  render: (h, params) => {
+                    return h('div', [
+                      h('p', {
+                        style: {
+                          color: '#2d8cf0'
+                        },
+                        on: {
+                          click: () => {
+                            this.$router.push({
+                              path: './experimentTask',
+                              query: {
+                                courseId: params.row.id,
+                              }
+                            })
+                          }
+                        }
+                      }, '查看'),
+                    ])
+                  }
+                },
               ],
               isAdd: false,
               isEdit: false,
@@ -227,7 +265,7 @@
           //改变页数
           pageChange(val) {
             this.pageNo = val;
-            this.getInfo();
+            this.getCourceList();
           },
           //获取课程列表
           getCourceList() {

@@ -111,7 +111,12 @@
                   },
                   on: {
                     click: () => {
-                      console.log(h,params)
+                      this.$router.push({
+                        path: './editReport',
+                        query: {
+                          expReportId: params.row.id,
+                        }
+                      })
                     }
                   }
                 }, '修改'),
@@ -125,10 +130,12 @@
     created() {
       this.getCourceList();
       //如果学生，直接显示学生所提交的实验报告
-
-      this.formItem.studentUserId = this.$route.query.studentUserId;
-      if(this.formItem.studentUserId !== null && this.formItem.studentUserId !== undefined) {
+      this.formItem.studentUserId = this.$store.state.loginInfo.userId;
+      let level = this.$store.state.loginInfo.level;
+      if(level === 3) {
         this.getReportList();
+      } else {
+        this.$Message.warning('请选择课程名称');
       }
     },
 

@@ -99,17 +99,21 @@
                   },
                   on: {
                     click: () => {
-                      this.$router.push({
-                        path: './addReport',
-                        query: {
-                          taskId: params.row.id,
-                          courseId: params.row.courseId,
-                          content: params.row.content,
-                        }
-                      })
+                      if(this.$store.state.loginInfo.level === 3) {
+                        this.$router.push({
+                          path: './addReport',
+                          query: {
+                            taskId: params.row.id,
+                            courseId: params.row.courseId,
+                            content: params.row.content,
+                          }
+                        })
+                      } else {
+                        this.$Message.warning('学生才可进行提交操作')
+                      }
                     }
                   }
-                }, '查看'),
+                }, '去提交'),
               ]);
             }
           },
@@ -129,23 +133,40 @@
                     size: 'small'
                   },
                   style: {
-                    marginRight: '5px'
+                    marginRight: '5px',
+                    display: this.$store.state.loginInfo.level === 1? 'block': 'none',
                   },
                   on: {
                     click: () => {
-                      if(this.$store.state.loginInfo.level === 1) {
-                        this.$router.push({
-                          path: './editTask',
-                          query: {
-                            expTeskId: params.row.id
-                          }
-                        });
-                      } else {
-                        this.$Message.warning('无此权限');
-                      }
+                      this.$router.push({
+                        path: './editTask',
+                        query: {
+                          expTeskId: params.row.id
+                        }
+                      });
                     }
                   }
                 }, '编辑'),
+                h('Button', {
+                  props: {
+                    type: 'primary',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px',
+                    display: this.$store.state.loginInfo.level === 3? 'block': 'none',
+                  },
+                  on: {
+                    click: () => {
+                      this.$router.push({
+                        path: './taskInfo',
+                        query: {
+                          expTeskId: params.row.id
+                        }
+                      });
+                    }
+                  }
+                }, '查看'),
               ]);
             }
           }
