@@ -128,8 +128,10 @@
     font-size: 14px;
     color: #fff;
   }
-a,
-a:hover {
+a {
   color: #fff;
+}
+a:hover {
+  background-color: #1205ff;
 }
 </style>

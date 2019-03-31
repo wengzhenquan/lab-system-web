@@ -79,7 +79,7 @@
         this.$router.push({
           path: './experimentReport',
           query: {
-            studentUserId: this.formItem.studentUserId,
+            courseId: this.formItem.courseId,
           }
         })
       },

@@ -6,7 +6,7 @@
         :options="editorOption"
       >
       </quill-editor>
-      <div style="margin-top: 10px">
+      <div style="margin:10px">
         附件：{{formItem.studentFileUrl}}
         <!--重新上传按钮仅学生可见-->
         <Upload
@@ -20,7 +20,7 @@
         <!--重新提交仅学生可见-->
         <Button type="primary" style="margin-right: 20px;color: #fff" v-if="level === 3" @click="editReport">重新提交</Button>
         <!--评分仅老师可见-->
-        <Button type="primary" v-if="level === 1" style="margin-right: 20px;color: #fff">评分</Button>
+        <Button type="primary" v-if="level === 1" style="margin-right: 20px;color: #fff" @click="isComment=true">评分</Button>
         <Poptip
           confirm
           title="返回上一级?"
@@ -29,6 +29,15 @@
           <Button>返回上一级</Button>
         </Poptip>
       </div>
+
+      <!--评分模态框-->
+      <Modal
+        v-model="isComment"
+        title="报告评分"
+        @on-ok="commentScore"
+       >
+        <Input v-model="achieve" placeholder="输入分数" style="width: 200px"></Input>
+      </Modal>
     </div>
 </template>
 
@@ -38,16 +47,18 @@
       return {
         expReportId: null,
         editorOption:{},
+        isComment: false,       //评分模态框
         upUrl: this.BaseConfig + '/fileUpload',     // 上传文件传入地址
         level: null,
         formItem: {
           teskId: null,
           courseId: null,
-          studentUserId: this.$store.state.loginInfo.userId,
+          studentUserId: null,
           studentFileUrl: '',
           content: '',
           updateTime: '',
         },
+        achieve : '',
       }
     },
 
@@ -109,8 +120,48 @@
           })
       },
 
+      //教师评分
+      commentScore() {
+        let that = this;
+        let url = that.BaseConfig + '/updateAchieveBy';
+        let params = {
+          achieve: that.achieve,
+          courseId: that.formItem.courseId,
+          studentId: that.formItem.studentUserId,
+          teacherId: that.$store.state.loginInfo.userId,
+        };
+        let data = null;
+        that
+          .$http(url, params, data, 'get')
+          .then(res => {
+            if(res.data.retCode === 0) {
+              that.$Message.success('评分完成');
+              that.$router.push({
+                path: './experimentReport',
+                query: {
+                  courseId: that.formItem.courseId,
+                }
+              })
+            } else {
+              that.$Message.error(res.data.retMsg);
+            }
+          })
+          .catch(err => {
+            that.$Message.error('请求错误');
+          })
+      },
+
       ok() {
-        this.$router.go(-1);
+        if(this.level === 1) {
+          this.$router.push({
+            path: './experimentReport',
+            query: {
+              courseId: this.formItem.courseId,
+            }
+          })
+        } else {
+          this.$router.go(-1);
+        }
       },
 
     }

@@ -29,8 +29,9 @@
         courceList: [],
         courList: [],    //课程列表
         reportList: [],  //实验报告列表
+        level: null,
         formItem: {
-          courseId: '',
+          courseId: null,
           score: null,
           teskId: null,           //不能为空
           studentUserId: null,    //不能为空
@@ -92,11 +93,17 @@
                   },
                   style: {
                     marginRight: '5px',
-                    display: this.$store.state.loginInfo.level === 1?'block':'none',
+                    display: this.level === 1?'block':'none',
                   },
                   on: {
                     click: () => {
-                      console.log(h,params)
+                      console.log(params.row)
+                      this.$router.push({
+                        path: './editReport',
+                        query: {
+                          expReportId: params.row.id,
+                        }
+                      })
                     }
                   }
                 }, '评分'),
@@ -107,7 +114,7 @@
                   },
                   style: {
                     marginRight: '5px',
-                    display: this.$store.state.loginInfo.level === 3?'block':'none',
+                    display: this.level === 3?'block':'none',
                   },
                   on: {
                     click: () => {
@@ -131,8 +138,11 @@
       this.getCourceList();
       //如果学生，直接显示学生所提交的实验报告
       this.formItem.studentUserId = this.$store.state.loginInfo.userId;
-      let level = this.$store.state.loginInfo.level;
-      if(level === 3) {
+      this.formItem.courseId = this.$route.query.courseId;
+      this.level = this.$store.state.loginInfo.level;
+      if(this.level === 3) {
+        this.getReportList();
+      } else if(this.formItem.courseId !== undefined && this.formItem.courseId !== null) {
         this.getReportList();
       } else {
         this.$Message.warning('请选择课程名称');
@@ -192,7 +202,7 @@
         let that = this;
         let url = that.BaseConfig + '/selectExpReportAll';
         let params;
-        if(this.formItem.studentUserId !== null && this.formItem.studentUserId !== undefined) {
+        if(this.level === 3) {
           params = {
             pageNo: that.pageNo,
             pageSize: 10,
@@ -206,12 +216,10 @@
           };
         }
         let data = null;
-        console.log(params)
         that
           .$http(url, params, data, 'get')
           .then(res => {
             data = res.data;
-            console.log(data)
             if(data.retCode === 0) {
               that.reportList = data.data.data;
               that.total = data.data.total;

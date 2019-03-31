@@ -2,7 +2,7 @@
   <div>
     <div class="user-manage" style="justify-content: flex-end" v-if="loginInfo.level === 1">
       <Router-link to="./addTask">
-        <Button type="primary" style="height: 33px;margin-top: 10px;">添加实验课题</Button>
+        <Button type="primary" style="height: 33px;margin-top: 10px;">添加实验任务</Button>
       </Router-link>
     </div>
     <div style="display:flex;margin-bottom: 8px;margin-top: 8px">
@@ -198,7 +198,7 @@
         this.getTaskList();
       },
 
-      //获取此用户开设的课程列表
+      //获取此教师开设的课程列表
       getCourceList() {
         let that = this;
         let url = that.BaseConfig + '/selectCourseAll';

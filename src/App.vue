@@ -16,7 +16,4 @@ export default {
     padding: 0;
     font-size: 14px;
   }
-  a:hover {
-    background-color: #1205ff;
-  }
 </style>

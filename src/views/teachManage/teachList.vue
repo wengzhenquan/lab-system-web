@@ -22,8 +22,7 @@
         <Modal
           v-model="isAdd"
           title="添加课程"
-          @on-ok="addCource"
-          @on-cancel="cancel">
+          @on-ok="addCource">
           <div>
             <Form :model="formItem" :label-width="80">
               <FormItem label="课程名称：">
@@ -55,8 +54,7 @@
       <Modal
         v-model="isEdit"
         title="修改课程"
-        @on-ok="editCource"
-        @on-cancel="editCancel">
+        @on-ok="editCource">
         <div>
           <Form :model="formItem" :label-width="80">
             <FormItem label="课程名称：">
@@ -308,7 +306,6 @@
             that.formItem.startDate = new Date(that.formItem.startDate).getTime();
             that.formItem.endDate = new Date(that.formItem.endDate).getTime();
             let data = that.formItem;
-            console.log(that.formItem)
             that
               .$http(url,'', data, 'post')
               .then(res => {
@@ -369,20 +366,6 @@
               .catch(err => {
                 that.$Message.error('请求错误');
               })
-          },
-
-          //取消
-          cancel() {
-           // this.formItem = {
-           //    courseName: '',
-           //    totalScore: null,
-           //    startDate: '',
-           //    endDate: '',
-           //    teacherUserId: null,
-           //  }
-          },
-          editCancel() {
-            console.log(this.formItem)
           },
         }
     }

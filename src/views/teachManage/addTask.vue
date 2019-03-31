@@ -130,26 +130,33 @@
           //添加实验任务
           addTask() {
             let that = this;
-            let url = that.BaseConfig + '/insertExpTesk';
-            that.formItem.startTime = new Date(that.startTime).getTime();
-            that.formItem.endTime = new Date(that.endTime).getTime();
-            let data = that.formItem;
-            that
-              .$http(url,'', data, 'post')
-              .then(res => {
-                if(res.data.retCode === 0) {
-                  that.$Message.success('添加实验任务成功');
-                  that.$router.push({
-                    path: './experimentTask',
-                    query: {
-                      courseId: that.formItem.courseId,
-                    }
-                  })
-                }
-              })
-              .catch(err => {
-                that.$Message.error('请求错误');
-              })
+
+            if(that.formItem.title === '' || that.formItem.title === undefined) {
+              that.$Message.warning('标题不能为空！')
+            } else if (that.formItem.courseId === null) {
+              that.$Message.warning('所属课程不能为空！')
+            } else {
+              let url = that.BaseConfig + '/insertExpTesk';
+              that.formItem.startTime = new Date(that.startTime).getTime();
+              that.formItem.endTime = new Date(that.endTime).getTime();
+              let data = that.formItem;
+              that
+                .$http(url,'', data, 'post')
+                .then(res => {
+                  if(res.data.retCode === 0) {
+                    that.$Message.success('添加实验任务成功');
+                    that.$router.push({
+                      path: './experimentTask',
+                      query: {
+                        courseId: that.formItem.courseId,
+                      }
+                    })
+                  }
+                })
+                .catch(err => {
+                  that.$Message.error('请求错误');
+                })
+            }
           },
 
           //取消添加任务
