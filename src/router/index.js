@@ -30,6 +30,7 @@ import labApply from "@/views/labManage/labApply";              // 实验室申�
 import labApproval from "@/views/labManage/labApproval";        // 实验室审批
 
 import deviceIndex from "@/views/deviceManage";                  // 设备
+import devSortManage from "@/views/deviceManage/devSortManage";  // 设备分类管理
 import devManage from "@/views/deviceManage/devManage";          // 设备管理
 import devUseManage from "@/views/deviceManage/devUseManage";    // 设备使用与分配
 import devStock from "@/views/deviceManage/devStock";            // 库存管理
@@ -199,8 +200,14 @@ export default new Router({
           children: [
             {
               path: '',
-              name: 'devManage',
-              component: devManage
+              name: 'devSortManage',
+              component: devSortManage
+            },
+            {
+              path: '/devSortManage',
+              name: 'devSortManage',
+              component: devSortManage,
+              title: '设备分类管理'
             },
             {
               path: '/devManage',
@@ -229,6 +236,6 @@ export default new Router({
           ]
         },
       ]
-    }
+    },
   ]
 })

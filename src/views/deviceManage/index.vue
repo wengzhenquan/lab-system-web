@@ -4,17 +4,20 @@
       <!--设备管理-->
       <Menu active-name="1-2" :open-names="['2']">
         <MenuItem name="1" style="color:#fff;background: #2d8cf0;">设备管理</MenuItem>
+        <Router-link to="/devSortManage">
+          <MenuItem name="2"><Icon type="ios-filing" />设备分类管理</MenuItem>
+        </Router-link>
         <Router-link to="/devManage">
-          <MenuItem name="2"><Icon type="ios-filing" />设备管理</MenuItem>
+          <MenuItem name="3"><Icon type="ios-filing" />设备管理</MenuItem>
         </Router-link>
         <Router-link to="/devUseManage">
-          <MenuItem name="3"><Icon type="ios-filing" />使用与分配</MenuItem>
+          <MenuItem name="4"><Icon type="ios-filing" />使用与分配</MenuItem>
         </Router-link>
         <Router-link to="/devStock">
-          <MenuItem name="4"><Icon type="ios-filing" />库存管理</MenuItem>
+          <MenuItem name="5"><Icon type="ios-filing" />库存管理</MenuItem>
         </Router-link>
         <Router-link to="/devApply">
-          <MenuItem name="5"><Icon type="ios-filing" />设备申请</MenuItem>
+          <MenuItem name="6"><Icon type="ios-filing" />设备申请</MenuItem>
         </Router-link>
       </Menu>
     </div>

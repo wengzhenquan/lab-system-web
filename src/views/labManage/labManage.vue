@@ -1,7 +1,9 @@
 <template>
   <div>
     <div class="user-manage">
-      <Button type="primary" style="height: 33px;margin-top: 10px;" @click="isAdd = true">添加实验室</Button>
+      <div>
+        <Button type="primary" style="height: 33px;margin-top: 10px;" @click="isAdd = true" v-if="level === 0">添加实验室</Button>
+      </div>
       <div style="display: flex; justify-content: flex-end;margin-top: 10px;margin-bottom: 10px">
         <Select v-model="sortValue" style="width:150px">
           <Option v-for="item in sortList" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -26,7 +28,7 @@
             <Input v-model="formItem.numb"></Input>
           </FormItem>
           <FormItem label="教室名称：">
-            <Input v-model="formItem.romsName"></Input>
+            <Input v-model="formItem.romName"></Input>
           </FormItem>
           <FormItem label="教室描述：">
             <Input v-model="formItem.content" type="textarea" :autosize="{minRows: 3,maxRows: 5}"></Input>
@@ -53,7 +55,7 @@
             <Input v-model="formItem.numb"></Input>
           </FormItem>
           <FormItem label="教室名称：">
-            <Input v-model="formItem.romsName"></Input>
+            <Input v-model="formItem.romName"></Input>
           </FormItem>
           <FormItem label="教室描述：">
             <Input v-model="formItem.content" type="textarea" :autosize="{minRows: 3,maxRows: 5}"></Input>
@@ -74,6 +76,7 @@
   export default {
     data() {
       return {
+        level: null,
         current: 1,
         labList: [],     //课程列表
         pageNo: 1,
@@ -132,6 +135,20 @@
                     }
                   }
                 }, '编辑'),
+                h('Button', {
+                  props: {
+                    type: 'primary',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      // 申请实验室
+                    }
+                  }
+                }, '申请'),
               ]);
             }
           }
@@ -139,9 +156,9 @@
         isAdd: false,
         isEdit: false,
         formItem: {
-          // id:null,
+          id:null,
           numb: '',
-          romsName: '',
+          romName: '',
           content: '',
           state: 0,
           userId: this.$store.state.loginInfo.userId,
@@ -152,13 +169,14 @@
     created() {
       this.getLabList();
       this.formItem.teacherUserId = this.$store.state.loginInfo.userId;
+      this.level = this.$store.state.loginInfo.level;
     },
 
     methods: {
       //改变页数
       pageChange(val) {
         this.pageNo = val;
-        this.getInfo();
+        this.getLabList();
       },
       //获取实验室列表
       getLabList() {
@@ -168,13 +186,14 @@
           pageNo: that.pageNo,
           pageSize: 10,
         };
+        console.log(data)
         that
           .$http(url, '', data, 'post')
           .then(res => {
             console.log('实验室列表', res);
             if(res.data.retCode === 0) {
-              // that.labList = data.data.data;
-              // that.total = data.data.total;
+              that.labList = data.data.data;
+              that.total = data.data.total;
             } else {
               that.$Message.error(res.data.retMsg);
             }
@@ -190,7 +209,6 @@
         let url = that.BaseConfig + '/insertRoms';
         that.formItem.state = parseInt(that.formItem.state)
         let data = that.formItem;
-        console.log(data)
         that
           .$http(url,'', data, 'post')
           .then(res => {
@@ -230,14 +248,7 @@
 
       //取消
       cancel() {
-        this.formItem = {
-          id:null,
-          numb: '',
-          romsName: '',
-          content: '',
-          state: 0,
-          userId: this.$store.state.loginInfo.userId,
-        }
+
       },
     }
   }
