@@ -1,18 +1,43 @@
 <template>
   <div>
     <div class="user-manage">
-      <div style="width: 40%;margin-bottom: 10px">
+      <div style="width: 40%;margin-bottom: 10px" v-if="level === 1">
         课程名称：
         <Select v-model="courseId" style="width:170px" @on-change="choiceAchieveList">
           <Option v-for="item in courList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
       </div>
+      <div style="width: 40%;margin-bottom: 10px" v-if="level === 3">
+        课程名称：
+        <Select v-model="courseId" style="width:170px" @on-change="getAchieveList">
+          <Option v-for="item in courList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+        </Select>
+      </div>
     </div>
-    <Table border ref="selection" :columns="columns" :data="achieveList" v-if="level === 1"></Table>
-    <Table border ref="selection" :columns="columnsS" :data="achieveList" v-if="level === 3"></Table>
-    <div style="margin-top: 20px; display: flex;justify-content: flex-end">
+    <Table border :columns="columns" :data="achieveList" v-if="level === 1"></Table>
+    <Table border :columns="columnsS" :data="achieveList" v-if="level === 3"></Table>
+    <div style="margin-top: 20px; display: flex;justify-content: space-between">
+      <div v-if="level === 1">
+        <Button type="primary" @click="allAchieve">一键评分</Button>
+        <Button type="success" @click="choiceAchieveList">刷新</Button>
+        <p style="color: red;margin-top: 5px">(计算公式：同课程的所有实验报告的平局成绩%  *  课程总分)</p>
+      </div>
       <Page :total="total" :key="total" :current.sync="current" @on-change="pageChange" />
     </div>
+
+    <!--评分-->
+    <Modal
+      v-model="commitModal"
+      title="课程得分"
+      @on-ok="commitAchieve">
+      <div>
+        <div style="display:flex;">
+          <Input v-model="achieve" placeholder="输入课程得分" style="width: 150px;margin-right: 20px"></Input>
+          <Button type="primary" @click="autoCommit">智能评分</Button>
+        </div>
+        <p style="color: red;margin-top: 5px">(计算公式：同课程的所有实验报告的平局成绩%  *  课程总分)</p>
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -59,7 +84,7 @@
             key: 'totalScore'
           },
           {
-            title: '得分',
+            title: '课程得分',
             key: 'achieve'
           },
           {
@@ -75,16 +100,31 @@
                   },
                   style: {
                     marginRight: '5px',
+                    display: params.row.achieve === 0? 'block': 'none',
                   },
                   on: {
                     click: () => {
+                      this.commitModal = true;
+                      this.achieve = params.row.achieve;
+                      this.courseId = params.row.courseId;
                       console.log(params.row)
-                      // this.$router.push({
-                      //   path: './editReport',
-                      //   query: {
-                      //     expReportId: params.row.id,
-                      //   }
-                      // })
+                    }
+                  }
+                }, '评分'),
+                h('Button', {
+                  props: {
+                    type: 'primary',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px',
+                    display: params.row.achieve !== 0? 'block': 'none',
+                  },
+                  on: {
+                    click: () => {
+                      this.commitModal = true;
+                      this.achieve = params.row.achieve;
+                      this.courseId = params.row.courseId;
                     }
                   }
                 }, '修改成绩'),
@@ -92,15 +132,16 @@
             }
           }
         ],
+        achieve: null,
         courseId: null,
+        studentId: null,
+        teacherId: null,
+        commitModal: false,
       }
     },
 
     created() {
       this.level = this.$store.state.loginInfo.level;
-      if(this.level === 3) {
-        this.getAchieveList();
-      }
       this.getCourceList();
     },
 
@@ -151,7 +192,6 @@
           courseId: that.courseId,
           teacherUserId: that.$store.state.loginInfo.userId,
         };
-        console.log(params)
         let data = null;
         that
           .$http(url, params, data, 'get')
@@ -204,6 +244,89 @@
             that.$Message.error('请求错误');
           })
       },
+
+      //智能评分
+      autoCommit() {
+        let that = this;
+        let url = that.BaseConfig + '/autoAchieveOnStudent';
+        let params = {
+          courseId: that.courseId,
+          studentId: that.studentId,
+          teacherId: that.$store.state.loginInfo.userId,
+        };
+        let data = null;
+        that
+          .$http(url, params, data, 'get')
+          .then(res => {
+            console.log(res)
+            data = res.data;
+            if(data.retCode === 0) {
+
+            } else {
+              that.$Message.error(data.retMsg);
+            }
+          })
+          .catch(err => {
+            that.$Message.error('请求错误');
+          })
+      },
+
+      //课程成绩评分
+      commitAchieve() {
+        let that = this;
+        let url = that.BaseConfig + '/updateAchieveBy';
+        let params = {
+          achieve: that.achieve,
+          courseId: that.courseId,
+          studentId: that.studentId,
+          teacherId: that.$store.state.loginInfo.userId,
+        };
+        let data = null;
+        that
+          .$http(url, params, data, 'get')
+          .then(res => {
+            console.log(res)
+            data = res.data;
+            if(data.retCode === 0) {
+
+            } else {
+              that.$Message.error(data.retMsg);
+            }
+          })
+          .catch(err => {
+            that.$Message.error('请求错误');
+          })
+      },
+
+      //一键智能评分
+      allAchieve() {
+        if(this.courseId === null) {
+          this.$Message.warning('请选择课程');
+          return;
+        }
+        let that = this;
+        let url = that.BaseConfig + '/autoAchieveOnCourse';
+        let params = {
+          courseId: that.courseId,
+          teacherId: that.$store.state.loginInfo.userId,
+        };
+        let data = null;
+        that
+          .$http(url, params, data, 'get')
+          .then(res => {
+            console.log(res)
+            data = res.data;
+            if(data.retCode === 0) {
+              that.$Message.warning(data.data)
+            } else {
+              that.$Message.error(data.retMsg);
+            }
+          })
+          .catch(err => {
+            that.$Message.error('请求错误');
+          })
+      },
+
     }
   }
 </script>

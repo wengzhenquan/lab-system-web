@@ -36,7 +36,7 @@
         title="报告评分"
         @on-ok="commentScore"
        >
-        <Input v-model="achieve" placeholder="输入分数" style="width: 200px"></Input>
+        <Input v-model="formItem.score" placeholder="输入分数" style="width: 200px"></Input>
       </Modal>
     </div>
 </template>
@@ -57,8 +57,9 @@
           studentFileUrl: '',
           content: '',
           updateTime: '',
+          score: null,
         },
-        achieve : '',
+        editTime: '',
       }
     },
 
@@ -88,6 +89,7 @@
             data = res.data;
             if(data.retCode === 0) {
               that.formItem = data.data;
+              that.editTime = this.formItem.updateTime;
             } else {
               that.$Message.error(data.retMsg);
             }
@@ -123,16 +125,11 @@
       //教师评分
       commentScore() {
         let that = this;
-        let url = that.BaseConfig + '/updateAchieveBy';
-        let params = {
-          achieve: that.achieve,
-          courseId: that.formItem.courseId,
-          studentId: that.formItem.studentUserId,
-          teacherId: that.$store.state.loginInfo.userId,
-        };
-        let data = null;
+        let url = that.BaseConfig + '/updateExpReport';
+        that.formItem.updateTime = new Date(that.editTime).getTime();
+        let data = that.formItem;
         that
-          .$http(url, params, data, 'get')
+          .$http(url, '', data, 'post')
           .then(res => {
             if(res.data.retCode === 0) {
               that.$Message.success('评分完成');

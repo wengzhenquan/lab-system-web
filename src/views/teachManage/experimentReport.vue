@@ -78,7 +78,7 @@
             key: 'name'
           },
           {
-            title: '得分',
+            title: '实验分',
             key: 'score',
           },
           {

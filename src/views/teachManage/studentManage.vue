@@ -208,6 +208,7 @@
             data = res.data;
             if(data.retCode === 0) {
               that.userInfo = data.data.data;
+              console.log(that.userInfo)
               that.userInfo.map(item=> {
                 if(item.level === 3) {
                   that.student = that.student.concat(item);
