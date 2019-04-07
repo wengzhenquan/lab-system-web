@@ -6,6 +6,7 @@ import homePage from "@/views/homePage";
 import home from "@/views/home";                        //首页
 import index from "@/views/index";                     //主题内容
 import userIndex from "@/views/userManage/index";      //用户管理-用户列表
+import permissionManage from "@/views/userManage/permissionManage";   //权限分配
 import identityList from "@/views/userManage/identityList";  //身份列表
 
 import teachIndex from "@/views/teachManage/index";                   //教务管理
@@ -76,6 +77,12 @@ export default new Router({
               name: 'userIndex',
               component: userIndex,
               title: '用户管理',
+            },
+            {
+              path: '/permissionManage',
+              name: 'permissionManage',
+              component: permissionManage,
+              title: '权限分配',
             },
             {
               path: '/identityList',

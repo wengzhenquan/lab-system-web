@@ -7,8 +7,11 @@
           <Router-link to="/userIndex">
             <MenuItem name="2"><Icon type="ios-filing" />账户管理</MenuItem>
           </Router-link>
+          <Router-link to="/permissionManage">
+              <MenuItem name="3"><Icon type="ios-filing" />权限分配</MenuItem>
+          </Router-link>
           <Router-link to="/identityList">
-            <MenuItem name="3"><Icon type="ios-filing" />身份与权限</MenuItem>
+            <MenuItem name="4"><Icon type="ios-filing" />身份管理</MenuItem>
           </Router-link>
         </Menu>
       </div>
