@@ -13,18 +13,87 @@
             <Radio label="系统管理员"></Radio>
           </RadioGroup>
         </div>
-        <p><span style="color: #2d78f4">免费注册</span><span>忘记密码？</span></p>
+        <p><span style="color: #2d78f4" @click="isRegister = true">免费注册</span><span>忘记密码？</span></p>
       </div>
+
+      <!--注册-只能是学生-->
+      <Modal
+        v-model="isRegister"
+        title="注册账号"
+        :mask-closable="isAuto"
+        :loading="true"
+        @on-ok="registerUser('registerInfo')"
+      >
+        <div>
+          <Form ref="registerInfo" :model="registerInfo" :rules="ruleCustom" :label-width="80">
+            <FormItem label="账户：" prop="userName">
+              <Input v-model="registerInfo.userName" style="width:200px"></Input>
+            </FormItem>
+            <FormItem label="名称：" prop="name">
+              <Input v-model="registerInfo.name" style="width:200px"></Input>
+            </FormItem>
+            <FormItem label="密码：" prop="pwd">
+              <Input type="password" v-model="registerInfo.pwd" style="width:200px"></Input>
+            </FormItem>
+            <FormItem label="确认密码：" prop="passwdCheck">
+              <Input type="password" v-model="registerInfo.passwdCheck" style="width:200px"></Input>
+            </FormItem>
+          </Form>
+        </div>
+      </Modal>
     </div>
 </template>
 
 <script>
     export default {
         data() {
+          const validatePass = (rule, value, callback) => {
+            if (value === '') {
+              callback(new Error('请输入登录密码'));
+            } else {
+              if (this.registerInfo.passwdCheck !== '') {
+                // 对第二个密码框单独验证
+                this.$refs.registerInfo.validateField('passwdCheck');
+              }
+              callback();
+            }
+          };
+          const validatePassCheck = (rule, value, callback) => {
+            if (value === '') {
+              callback(new Error('请再次输入登录密码'));
+            } else if (value !== this.registerInfo.pwd) {
+              callback(new Error('登录密码不一致，请重新输入!'));
+            } else {
+              callback();
+            }
+          };
             return {
               userName: '',
               pwd: '',
               levelValue: '学生',
+              isRegister: false,
+              isAuto: false,
+              registerInfo: {
+                userName: '',
+                name: '',
+                pwd:'',
+                identityId: 4,
+                passwdCheck: '',
+              },
+              ruleCustom: {
+                userName: [
+                  { required: true, message: '账号不能为空', trigger: 'blur' }
+                ],
+                name: [
+                  { required: true, message: '姓名不能为空', trigger: 'blur' }
+                ],
+                pwd: [
+                  {required: true, validator: validatePass, trigger: 'blur' }
+                ],
+                passwdCheck: [
+                  {required: true, validator: validatePassCheck, trigger: 'blur' }
+                ],
+              }
             }
         },
 
@@ -63,6 +132,43 @@
               .catch(err => {
                 this.$Message.error('请求错误');
               })
+          },
+
+          //注册
+          registerUser(name) {
+            this.$refs[name].validate((valid) => {
+              if (valid) {
+                let that = this;
+                let url = that.BaseConfig + '/insertUser';
+                let data = that.registerInfo;
+                that
+                  .$http(url, '', data, 'post')
+                  .then(res => {
+                    if(res.data.retCode === 0) {
+                      that.$Message.success('注册成功');
+                      setTimeout(()=> {
+                        that.isRegister = false;
+                      },800)
+                    } else {
+                      that.$Message.error(res.data.retMsg);
+                      setTimeout(()=> {
+                        that.isRegister = false;
+                      },1000)
+                    }
+                  })
+                  .catch(err => {
+                    that.$Message.error('请求错误');
+                    setTimeout(()=> {
+                      that.isRegister = false;
+                    },1000)
+                  });
+              } else {
+                this.$Message.error('注册信息不完整!');
+                setTimeout(()=> {
+                  this.isRegister = false;
+                },1000)
+              }
+            });
           },
         }
     }

@@ -1,14 +1,13 @@
 <template>
   <div>
     <div class="user-manage">
+      <div style="display: flex;margin-top: 10px;margin-bottom: 10px">
+        <!--<Select v-model="sortValue" style="width:150px">-->
+          <!--<Option v-for="item in sortList" :value="item.value" :key="item.value">{{ item.label }}</Option>-->
+        <!--</Select>-->
+      </div>
       <div>
         <Button type="primary" style="height: 33px;margin-top: 10px;" @click="isAdd = true" v-if="level === 0">添加实验室</Button>
-      </div>
-      <div style="display: flex; justify-content: flex-end;margin-top: 10px;margin-bottom: 10px">
-        <Select v-model="sortValue" style="width:150px">
-          <Option v-for="item in sortList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-        </Select>
-        <div style="width: 270px;margin-left: 3px"><Input search enter-button="搜索" placeholder="输入要查找的内容" v-model="name" /></div>
       </div>
     </div>
     <Table border ref="selection" :columns="columns4" :data="labList"></Table>
@@ -20,8 +19,7 @@
     <Modal
       v-model="isAdd"
       title="添加实验室"
-      @on-ok="addLab"
-      @on-cancel="cancel">
+      @on-ok="addLab">
       <div>
         <Form :model="formItem" :label-width="80">
           <FormItem label="教室编号：">
@@ -79,20 +77,8 @@
         level: null,
         current: 1,
         labList: [],     //课程列表
-        pageNo: 1,
+        pageNo: 1,pageNo1: 1,
         total: 0,
-        sortList: [
-          {
-            value: 'userName',
-            label: '学号'
-          },
-          {
-            value: 'name',
-            label: '姓名'
-          },
-        ],    //查找条件
-        sortValue:'',
-        name: '',     //查找内容
         columns4: [
           {
             title: '教室编号',
@@ -126,7 +112,8 @@
                     size: 'small'
                   },
                   style: {
-                    marginRight: '5px'
+                    marginRight: '5px',
+                    display: this.level === 0? 'block': 'none'
                   },
                   on: {
                     click: () => {
@@ -141,7 +128,8 @@
                     size: 'small'
                   },
                   style: {
-                    marginRight: '5px'
+                    marginRight: '5px',
+                    display: this.level === 1? 'block': 'none'
                   },
                   on: {
                     click: () => {
@@ -182,20 +170,21 @@
       getLabList() {
         let that = this;
         let url = that.BaseConfig + '/selectRomsAll';
-        let data = {
+        let params = {
           pageNo: that.pageNo,
           pageSize: 10,
         };
-        console.log(data)
+        let data = null;
         that
-          .$http(url, '', data, 'post')
+          .$http(url, params, data, 'get')
           .then(res => {
-            console.log('实验室列表', res);
-            if(res.data.retCode === 0) {
+            data = res.data;
+            console.log('实验室列表', data);
+            if(data.retCode === 0) {
               that.labList = data.data.data;
               that.total = data.data.total;
             } else {
-              that.$Message.error(res.data.retMsg);
+              that.$Message.error(data.retMsg);
             }
           })
           .catch(err => {
@@ -207,14 +196,21 @@
       addLab() {
         let that = this;
         let url = that.BaseConfig + '/insertRoms';
-        that.formItem.state = parseInt(that.formItem.state)
+        that.formItem.state = parseInt(that.formItem.state);
         let data = that.formItem;
         that
           .$http(url,'', data, 'post')
           .then(res => {
-            console.log('创建实验室', res);
             if(res.data.retCode === 0) {
               that.$Message.success('创建实验室成功');
+              that.formItem = {
+                id:null,
+                numb: '',
+                romName: '',
+                content: '',
+                state: 0,
+                userId: this.$store.state.loginInfo.userId,
+              };
               that.getLabList();
             } else {
               that.$Message.error(res.data.retMsg);
@@ -225,31 +221,47 @@
           })
       },
 
-      //修改实验室信息
+      //修改实验室信息,修改负责人，在已有系统管理员中选择
       editLab() {
         let that = this;
         let url = that.BaseConfig + '/updateRoms';
+        that.formItem.state = parseInt(that.formItem.state);
+        that.formItem.userId = that.$store.state.loginInfo.userId;
         let data = that.formItem;
         that
           .$http(url,'', data, 'post')
           .then(res => {
-            console.log('修改实验室信息', res);
             if(res.data.retCode === 0) {
               that.$Message.success('修改成功');
               that.getLabList();
             } else {
               that.$Message.error(res.data.retMsg);
             }
+            that.formItem = {
+              id:null,
+              numb: '',
+              romName: '',
+              content: '',
+              state: 0,
+              userId: this.$store.state.loginInfo.userId,
+            };
           })
           .catch(err => {
             that.$Message.error('请求错误');
           })
       },
-
-      //取消
       cancel() {
-
+        let that = this;
+        that.formItem = {
+          id:null,
+          numb: '',
+          romName: '',
+          content: '',
+          state: 0,
+          userId: this.$store.state.loginInfo.userId,
+        };
       },
+
     }
   }
 </script>
@@ -258,5 +270,6 @@
   .user-manage {
     display: flex;
     justify-content: space-between;
+    margin-bottom: 15px;
   }
 </style>

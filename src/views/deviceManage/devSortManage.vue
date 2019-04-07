@@ -28,7 +28,8 @@
       <Modal
         v-model="isEdit"
         title="编辑设备类型"
-        @on-ok="editDevSort">
+        @on-ok="editDevSort"
+        @on-cancel="equipmentClass.typeName = ''">
         <div>
           <Form :model="equipmentClass" :label-width="80">
             <FormItem label="设备类型：">
@@ -162,6 +163,7 @@
           .then(res => {
             if(res.data.retCode === 0) {
               that.$Message.success('修改设备类型成功');
+              that.equipmentClass.typeName = '';
               this.getDevSort();
             } else {
               that.$Message.error(res.data.retMsg);
