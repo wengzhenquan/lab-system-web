@@ -156,7 +156,7 @@
                 }
               })
               .catch(err => {
-                that.$Message.error('请求错误');
+                that.$Message.error('1请求错误');
               })
           },
 
@@ -190,7 +190,7 @@
                 }
               })
               .catch(err => {
-                that.$Message.error('请求错误');
+                that.$Message.error('2请求错误');
               })
           },
 
@@ -215,7 +215,7 @@
                 // }
               })
               .catch(err => {
-                that.$Message.error('请求错误');
+                that.$Message.error('3请求错误');
               })
           },
 
