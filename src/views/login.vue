@@ -127,6 +127,8 @@
                   that.$router.push({
                     path: '/homePage',
                   })
+                } else {
+                  that.$Message.error(res.data.retMsg)
                 }
               })
               .catch(err => {

@@ -32,8 +32,8 @@
             <FormItem label="设备状态：">
               <RadioGroup v-model="state">
                 <Radio label="0">正常</Radio>
-                <Radio label="1">报修</Radio>
-                <Radio label="2">报废</Radio>
+                <Radio label="1" disabled>报修</Radio>
+                <Radio label="2" disabled>报废</Radio>
               </RadioGroup>
             </FormItem>
             <FormItem label="购买时间：">
@@ -156,7 +156,7 @@
                 }
               })
               .catch(err => {
-                that.$Message.error('1请求错误');
+                that.$Message.error('请求错误');
               })
           },
 
@@ -190,7 +190,7 @@
                 }
               })
               .catch(err => {
-                that.$Message.error('2请求错误');
+                that.$Message.error('请求错误');
               })
           },
 
@@ -205,17 +205,16 @@
               .$http(url, '', data, 'post')
               .then(res => {
                 console.log(res)
-                // if(res.data.retCode === 0) {
-                //   that.$Message.success('添加设备成功');
-                //   that.isAdd = false;
-                //   this.getDevSort();
-                // } else {
-                //   that.$Message.error(res.data.retMsg);
-                //   console.log(res.data.retMsg)
-                // }
+                if(res.data.retCode === 0) {
+                  that.$Message.success('添加设备成功');
+                  that.isAdd = false;
+                  this.getDevList();
+                } else {
+                  that.$Message.error(res.data.retMsg);
+                }
               })
               .catch(err => {
-                that.$Message.error('3请求错误');
+                that.$Message.error('请求错误');
               })
           },
 

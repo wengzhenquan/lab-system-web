@@ -64,19 +64,24 @@
         let that = this;
         let url = that.BaseConfig + '/insertExpReport';
         let data = that.formItem;
-        that
-          .$http(url,'', data, 'post')
-          .then(res => {
-            if(res.data.retCode === 0) {
-              that.$Message.success('提交实验报告成功');
-              that.$router.push({
-                path: './experimentReport',
-              })
-            }
-          })
-          .catch(err => {
-            that.$Message.error('请求错误');
-          })
+        if(that.formItem.courseId === null) {
+          that.$Message.warning('未进入该课程！');
+        } else {
+          that
+            .$http(url,'', data, 'post')
+            .then(res => {
+              if(res.data.retCode === 0) {
+                that.$Message.success('提交实验报告成功');
+                that.$router.push({
+                  path: './experimentReport',
+                })
+              }
+            })
+            .catch(err => {
+              that.$Message.error('请求错误');
+            })
+        }
+
       },
 
       //清空实验报告并返回上一级

@@ -175,7 +175,7 @@
     },
 
     created() {
-      // 老师进入要先选择实验课程名称，学生进入可查看所有实验任务
+      // 老师进入要先选择实验课程名称，学生进入可查看所在课程的所有实验任务
       this.loginInfo = this.$store.state.loginInfo;
       this.formItem.courseId = this.$route.query.courseId;
       if((this.formItem.courseId === undefined || this.formItem.courseId === null)&& this.loginInfo.level === 1)  {
@@ -198,15 +198,23 @@
         this.getTaskList();
       },
 
-      //获取此教师开设的课程列表
+      //获取课程列表
       getCourceList() {
         let that = this;
         let url = that.BaseConfig + '/selectCourseAll';
-        let params = {
-          pageNo: that.pageNo1,
-          pageSize: 10,
-          teacherUserId: that.$store.state.loginInfo.userId,
-        };
+        let params;
+        if(that.loginInfo.level === 1) {
+          params = {
+            pageNo: that.pageNo1,
+            pageSize: 10,
+            teacherUserId: that.$store.state.loginInfo.userId,
+          }
+        } else {
+          params = {
+            pageNo: that.pageNo1,
+            pageSize: 10,
+          }
+        }
         let data = null;
         that
           .$http(url, params, data, 'get')

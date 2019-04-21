@@ -25,9 +25,6 @@
       <Content>
         <div class="top">
           <div style="width: 70%">实验室系统</div>
-          <div class="user-info">
-
-          </div>
         </div>
         <div style="background-color: #2d8cf0;">
           <div class="nav">
@@ -37,7 +34,7 @@
             <Router-link to="/userIndex" v-if="level === 0">
               <MenuItem name="2">账户管理</MenuItem>
             </Router-link>
-            <Router-link to="/teachIndex">
+            <Router-link to="/teachIndex"  v-if="level === 1 || level === 3">
               <MenuItem name="3">教务管理</MenuItem>
             </Router-link>
             <Router-link to="/labIndex">

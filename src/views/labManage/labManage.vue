@@ -2,9 +2,10 @@
   <div>
     <div class="user-manage">
       <div style="display: flex;margin-top: 10px;margin-bottom: 10px">
-        <!--<Select v-model="sortValue" style="width:150px">-->
-          <!--<Option v-for="item in sortList" :value="item.value" :key="item.value">{{ item.label }}</Option>-->
-        <!--</Select>-->
+        <Select v-model="sortValue" style="width:150px">
+          <Option v-for="item in sortList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+        </Select>
+        <div style="width: 270px;margin-left: 3px"><Input search enter-button="搜索" placeholder="输入要查找的内容" v-model="name" @on-search="searchLab"/></div>
       </div>
       <div>
         <Button type="primary" style="height: 33px;margin-top: 10px;" @click="isAdd = true" v-if="level === 0">添加实验室</Button>
@@ -33,8 +34,8 @@
           </FormItem>
           <FormItem label="使用状态：">
             <RadioGroup v-model="formItem.state">
-              <Radio label="0">空闲</Radio>
-              <Radio label="1">使用中</Radio>
+              <Radio label="0" >空闲</Radio>
+              <Radio label="1" disabled>使用中</Radio>
             </RadioGroup>
           </FormItem>
         </Form>
@@ -45,8 +46,7 @@
     <Modal
       v-model="isEdit"
       title="修改实验信息"
-      @on-ok="editLab"
-      @on-cancel="cancel">
+      @on-ok="editLab">
       <div>
         <Form :model="formItem" :label-width="80">
           <FormItem label="教室编号：">
@@ -98,7 +98,40 @@
           },
           {
             title: '使用状态',
-            key: 'state',
+            render: (h, params) => {
+              return h('div', [
+                h('p', {
+                  style: {
+                    marginRight: '5px',
+                    display: params.row.state === 0? 'block': 'none'
+                  },
+                }, '空闲'),
+                h('p', {
+                  style: {
+                    marginRight: '5px',
+                    display: params.row.state === 1? 'block': 'none'
+                  },
+                }, '使用中'),
+              ]);
+            },
+            filters: [
+              {
+                label: '空闲',
+                value: 0
+              },
+              {
+                label: '使用中',
+                value: 1
+              },
+            ],
+            filterMultiple: false,
+            filterMethod (value, row) {
+              if (value === 0) {
+                return row.state === 0;
+              } else if (value === 1) {
+                return row.state === 1;
+              }
+            }
           },
           {
             title: '操作',
@@ -119,6 +152,7 @@
                     click: () => {
                       this.isEdit = true;
                       this.formItem = params.row;
+                      this.formItem.state = String(this.formItem.state);
                     }
                   }
                 }, '编辑'),
@@ -148,9 +182,22 @@
           numb: '',
           romName: '',
           content: '',
-          state: 0,
+          state: '0',
           userId: this.$store.state.loginInfo.userId,
-        }
+        },
+        name: '',
+        sortList: [
+          {
+            value: 'all',
+            label: '全部'
+          },
+          {
+            value: 'numb',
+            label: '教室编号'
+          },
+        ],    //查找条件
+        sortValue:'all',
+        userId: null,
       }
     },
 
@@ -179,9 +226,11 @@
           .$http(url, params, data, 'get')
           .then(res => {
             data = res.data;
-            console.log('实验室列表', data);
             if(data.retCode === 0) {
               that.labList = data.data.data;
+              that.labList.map(item => {
+                item.state = parseInt(item.state)
+              })
               that.total = data.data.total;
             } else {
               that.$Message.error(data.retMsg);
@@ -208,7 +257,7 @@
                 numb: '',
                 romName: '',
                 content: '',
-                state: 0,
+                state: '0',
                 userId: this.$store.state.loginInfo.userId,
               };
               that.getLabList();
@@ -250,16 +299,36 @@
             that.$Message.error('请求错误');
           })
       },
-      cancel() {
+
+      //搜索实验室列表(实验室编号、负责人)
+      searchLab() {
         let that = this;
-        that.formItem = {
-          id:null,
-          numb: '',
-          romName: '',
-          content: '',
-          state: 0,
-          userId: this.$store.state.loginInfo.userId,
-        };
+        let url = that.BaseConfig + '/selectRomsAll';
+        let params;
+        if(that.sortValue === 'numb') {
+          params = {
+            numb: parseInt(that.name),
+            pageNo: 1,
+            pageSize: 10,
+          }
+        } else if(that.sortValue === 'all') {
+          that.name = '';
+          that.getLabList();
+        }
+        console.log(params)
+        let data = null;
+        that
+          .$http(url, params , data, 'get')
+          .then(res =>{
+            data = res.data;
+            if(data.retCode === 0) {
+              that.labList = data.data.data;
+              that.total = data.data.total;
+            }
+          })
+          .catch(err => {
+            that.$Message.error('请求错误');
+          })
       },
 
     }

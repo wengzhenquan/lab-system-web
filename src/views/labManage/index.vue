@@ -7,10 +7,10 @@
         <Router-link to="/labManage">
           <MenuItem name="2"><Icon type="ios-filing" />实验室管理</MenuItem>
         </Router-link>
-        <Router-link to="/labApply">
+        <Router-link to="/labApply" v-if="level !== 0">
           <MenuItem name="3"><Icon type="ios-filing" />实验室申请</MenuItem>
         </Router-link>
-        <Router-link to="/labApproval">
+        <Router-link to="/labApproval" v-if="level === 0">
           <MenuItem name="4"><Icon type="ios-filing" />实验室审批</MenuItem>
         </Router-link>
       </Menu>
@@ -24,7 +24,13 @@
 <script>
   export default {
     data() {
-      return {}
+      return {
+        level: null,
+      }
+    },
+
+    created() {
+      this.level = this.$store.state.loginInfo.level;
     },
 
     methods: {}

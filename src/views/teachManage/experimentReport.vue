@@ -97,7 +97,6 @@
                   },
                   on: {
                     click: () => {
-                      console.log(params.row)
                       this.$router.push({
                         path: './editReport',
                         query: {

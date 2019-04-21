@@ -1,14 +1,31 @@
 <template>
   <div>
-    <div style="display: flex;justify-content: space-around">
-      <div class="applying">待审批</div>
-      <div class="applying approved">已审批</div>
-      <div class="applying completed">已处理</div>
-    </div>
-    <Table border ref="selection" :columns="columns" :data="applyList"></Table>
-    <div style="margin-top: 20px; display: flex;justify-content: flex-end">
-      <Page :total="total" :key="total" :current.sync="current" @on-change="pageChange" />
-    </div>
+    <Tabs type="card" @on-click="getApplyList">
+      <TabPane label="全部">
+        <Table border ref="selection" :columns="columns" :data="applyList"></Table>
+        <div style="margin-top: 20px; display: flex;justify-content: flex-end">
+          <Page :total="total" :key="total" :current.sync="current" @on-change="pageChange" />
+        </div>
+      </TabPane>
+      <TabPane label="待审核">
+        <Table border ref="selection" :columns="columns" :data="applyList"></Table>
+        <div style="margin-top: 20px; display: flex;justify-content: flex-end">
+          <Page :total="total" :key="total" :current.sync="current" @on-change="pageChange" />
+        </div>
+      </TabPane>
+      <TabPane label="已审批">
+        <Table border ref="selection" :columns="columns" :data="applyList"></Table>
+        <div style="margin-top: 20px; display: flex;justify-content: flex-end">
+          <Page :total="total" :key="total" :current.sync="current" @on-change="pageChange" />
+        </div>
+      </TabPane>
+      <TabPane label="已处理">
+        <Table border ref="selection" :columns="columns" :data="applyList"></Table>
+        <div style="margin-top: 20px; display: flex;justify-content: flex-end">
+          <Page :total="total" :key="total" :current.sync="current" @on-change="pageChange" />
+        </div>
+      </TabPane>
+    </Tabs>
   </div>
 </template>
 
@@ -19,7 +36,7 @@
         pageNo: 1,
         total:0,
         current:1,
-        applyList: [],   //实验室申请列表  管理员看到全部，教师看到自己的申请记录
+        applyList: [],
         columns: [
           {
             title: '申请人',
@@ -98,13 +115,34 @@
       },
 
       //获取实验室申请列表
-      getApplyList() {
+      getApplyList(name) {  //name为0-全部，1-待审核， 2-已审批 ， 3-已处理
         let that = this;
         let url = that.BaseConfig + '/selectRomLogAll';
-        let params = {
-          pageNo: that.pageNo,
-          pageSize: 10,
-        };
+        let params;
+        if(name === 0 || name === undefined) {
+          params = {
+            pageNo: that.pageNo,
+            pageSize: 10,
+          }
+        } else if(name === 1) {
+          params = {
+            state: 0,
+            pageNo: that.pageNo,
+            pageSize: 10,
+          }
+        } else if(name === 2) {
+          params = {
+            state: 1,
+            pageNo: that.pageNo,
+            pageSize: 10,
+          }
+        } else if(name === 3) {
+          params = {
+            state: 2,
+            pageNo: that.pageNo,
+            pageSize: 10,
+          }
+        }
         let data = null;
         that
           .$http(url, params, data, 'get')
@@ -112,7 +150,6 @@
             data = res.data;
             if(data.retCode === 0) {
               that.applyList = data.data.data;
-              console.log(that.applyList)
               that.total = data.data.total;
             } else {
               that.$Message.error(data.retMsg);
@@ -128,22 +165,5 @@
 </script>
 
 <style lang="less" scoped>
-.applying {
-  width: 20%;
-  height: 80px;
-  border-radius: 20px;
-  background-color: #f9432be0;
-  margin-bottom: 15px;
-  color: #fff;
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 80px;
-  text-align: center;
-}
-  .approved {
-    background-color: #cafa0ab8;
-  }
-  .completed {
-    background-color: #1c59f0bd;
-  }
+
 </style>

@@ -6,7 +6,7 @@
         <Select v-model="sortValue" style="width:150px">
           <Option v-for="item in sortList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
-        <div style="width: 270px;margin-left: 3px"><Input search enter-button="搜索" placeholder="输入要查找的内容" v-model="name" @on-click="searchUser"/></div>
+        <div style="width: 270px;margin-left: 3px"><Input search enter-button="搜索" placeholder="输入要查找的内容" v-model="name" @on-search="searchUser"/></div>
       </div>
     </div>
     <Table border ref="selection" :columns="columns4" :data="userInfo"></Table>
@@ -54,7 +54,7 @@
       @on-cancel=" handleReset('formValidate')">
       <div>
         <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
-          <FormItem label="用户名：" prop="userName">
+          <FormItem label="账号：" prop="userName">
             <Input v-model="formValidate.userName" placeholder="输入用户名" readonly></Input>
           </FormItem>
           <FormItem label="密码：" prop="pwd">
@@ -126,7 +126,7 @@
         userInfo: [],    //用户列表,配合接口请求时，为了搭配分页使用要有两个动态参数pageNum,pageNo，条数与页数。
         columns4: [
           {
-            title: '学号',
+            title: '账号',
             key: 'userName'
           },
           {
@@ -135,7 +135,37 @@
           },
           {
             title: '身份',
-            key: 'identityName'
+            key: 'identityName',
+            filters: [
+              {
+                label: '管理员',
+                value: 1
+              },
+              {
+                label: '教师',
+                value: 2
+              },
+              {
+                label: '设备管理员',
+                value: 3
+              },
+              {
+                label: '学生',
+                value: 4
+              }
+            ],
+            filterMultiple: false,
+            filterMethod (value, row) {
+              if (value === 1) {
+                return row.identityName === '管理员';
+              } else if (value === 2) {
+                return row.identityName === '教师';
+              }  else if (value === 3) {
+                return row.identityName === '设备管理员';
+              }  else if (value === 4) {
+                return row.identityName === '学生';
+              }
+            }
           },
           {
             title: '职位',
@@ -190,15 +220,19 @@
         name: '',
         sortList: [
           {
+            value: 'all',
+            label: '全部'
+          },
+          {
             value: 'userName',
-            label: '学号'
+            label: '账号'
           },
           {
             value: 'name',
             label: '姓名'
           },
         ],    //查找条件
-        sortValue:'',
+        sortValue:'all',
         isAddUser: false,
         formValidate: {
           userName: '',
@@ -368,18 +402,27 @@
       searchUser() {
         let that = this;
         let url = that.BaseConfig + '/selectUsersAll';
-        let params = {
-          name: that.name,
-          // userName: that.userName,
-          // identityName: that.identityName,
-          pageNo: 1,
-          pageSize: 10,
-        };
+        let params;
+        if(that.sortValue === 'userName') {
+          params = {
+            userName: that.name,
+            pageNo: 1,
+            pageSize: 10,
+          }
+        } else if(that.sortValue === 'name') {
+          params = {
+            name: that.name,
+            pageNo: 1,
+            pageSize: 10,
+          }
+        } else if(that.sortValue === 'all') {
+          that.name = '';
+          that.getInfo();
+        }
         let data = null;
         that
           .$http(url, params , data, 'get')
           .then(res =>{
-            console.log(res)
             data = res.data;
             if(data.retCode === 0) {
               that.userInfo = data.data.data;

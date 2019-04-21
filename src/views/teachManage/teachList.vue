@@ -1,13 +1,7 @@
 <template>
     <div>
       <div class="user-manage">
-        <div><Button type="primary" style="height: 33px;margin-top: 10px;" @click="isAdd = true" v-if="level === 1">添加课程</Button></div>
-        <div style="display: flex; justify-content: flex-end;margin-top: 10px;margin-bottom: 10px">
-          <Select v-model="sortValue" style="width:150px">
-            <Option v-for="item in sortList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-          </Select>
-          <div style="width: 270px;margin-left: 3px"><Input search enter-button="搜索" placeholder="输入要查找的内容" v-model="name" /></div>
-        </div>
+        <div ><Button type="primary" style="height: 33px;margin-bottom: 10px;" @click="isAdd = true" v-if="level === 1">添加课程</Button></div>
       </div>
       <div class="col">
         <Table border ref="selection" :columns="columns4" :data="courceList" v-if="level === 1"></Table>
@@ -91,18 +85,6 @@
               courceList: [],     //课程列表
               pageNo: 1,
               total: 0,
-              sortList: [
-                {
-                  value: 'userName',
-                  label: '学号'
-                },
-                {
-                  value: 'name',
-                  label: '姓名'
-                },
-              ],    //查找条件
-              sortValue:'',
-              name: '',     //查找内容
               columns4: [
                 {
                   title: '课程名',
@@ -374,6 +356,6 @@
 <style lang="less" scoped>
   .user-manage {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
   }
 </style>

@@ -1,9 +1,8 @@
 <template>
     <div>
-      <div style="display: flex;justify-content: space-around">
-        <div class="applying">申请中</div>
-        <div class="applying approved">已审批</div>
-        <div class="applying completed">已处理</div>
+      <!--老师才可进行申请-->
+      <div style="display: flex;justify-content: flex-end">
+        <Button type="primary" style="height: 33px;margin-bottom: 10px;" @click="isApply = true" v-if="level === 1">申请实验室</Button>
       </div>
       <Table border ref="selection" :columns="columns" :data="applyList"></Table>
       <div style="margin-top: 20px; display: flex;justify-content: flex-end">
@@ -12,7 +11,7 @@
 
       <Modal
         v-model="isApply"
-        title="Common Modal dialog box title"
+        title="实验室申请"
         @on-ok="labApply">
         <div>
           <div class="apply-title">实验室申请表</div>
@@ -25,10 +24,10 @@
               </FormItem>
               <FormItem label="使用开始时间：">
                 <Row>
-                  <Col span="6">
+                  <Col span="11">
                     <DatePicker type="date" placeholder="Select date" v-model="startDate"></DatePicker>
                   </Col>
-                  <Col span="4" style="text-align: center">-</Col>
+                  <Col span="2" style="text-align: center">-</Col>
                   <Col span="11">
                     <TimePicker type="time" placeholder="Select time" v-model="startTime"></TimePicker>
                   </Col>
@@ -36,10 +35,10 @@
               </FormItem>
               <FormItem label="使用结束时间：">
                 <Row>
-                  <Col span="6">
+                  <Col span="11">
                     <DatePicker type="date" placeholder="Select date" v-model="endDate"></DatePicker>
                   </Col>
-                  <Col span="4" style="text-align: center">-</Col>
+                  <Col span="2" style="text-align: center">-</Col>
                   <Col span="11">
                     <TimePicker type="time" placeholder="Select time" v-model="endTime"></TimePicker>
                   </Col>
@@ -98,7 +97,28 @@
           },
           {
             title: '申请状态',   // 0 - 审核中，1-已审批， 2-已处理
-            key: 'state',
+            render: (h, params) => {
+              return h('div', [
+                h('p', {
+                  style: {
+                    marginRight: '5px',
+                    display: params.row.state === 0? 'block': 'none'
+                  },
+                }, '审核中'),
+                h('p', {
+                  style: {
+                    marginRight: '5px',
+                    display: params.row.state === 1? 'block': 'none'
+                  },
+                }, '已审批'),
+                h('p', {
+                  style: {
+                    marginRight: '5px',
+                    display: params.row.state === 2? 'block': 'none'
+                  },
+                }, '已处理'),
+              ]);
+            }
           },
           {
             title: '处理人',
@@ -142,6 +162,7 @@
             }
           }
         ],
+        level: this.$store.state.loginInfo.level,
       }
     },
 
@@ -162,10 +183,12 @@
         let that = this;
         let url = that.BaseConfig + '/selectRomLogAll';
         let params = {
+          userId: that.formItem.userId,
           pageNo: that.pageNo,
           pageSize: 10,
         };
         let data = null;
+        console.log(params)
         that
           .$http(url, params, data, 'get')
           .then(res => {
@@ -226,16 +249,15 @@
         console.log(that.formItem)
 
         let url = that.BaseConfig + '/insertRomLog';
-        let params = that.formItem;
-        let data = null;
+        let data = that.formItem;
         that
-          .$http(url, params, data, 'get')
+          .$http(url, '', data, 'post')
           .then(res => {
-            data = res.data;
-            if(data.retCode === 0) {
-              console.log(data)
+            if(res.data.retCode === 0) {
+              that.$Message.success('实验室申请成功');
+              that.getApplyList();
             } else {
-              that.$Message.error(data.retMsg);
+              that.$Message.error(res.data.retMsg);
             }
           })
           .catch(err => {

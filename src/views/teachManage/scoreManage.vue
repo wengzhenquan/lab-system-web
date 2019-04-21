@@ -3,7 +3,7 @@
     <div class="user-manage">
       <div style="width: 40%;margin-bottom: 10px" v-if="level === 1">
         课程名称：
-        <Select v-model="courseId" style="width:170px" @on-change="choiceAchieveList">
+        <Select v-model="courseId" style="width:170px" @on-change="getList">
           <Option v-for="item in courList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
       </div>
@@ -107,7 +107,7 @@
                       this.commitModal = true;
                       this.achieve = params.row.achieve;
                       this.courseId = params.row.courseId;
-                      console.log(params.row)
+                      this.studentId = params.row.studentId;
                     }
                   }
                 }, '评分'),
@@ -125,6 +125,7 @@
                       this.commitModal = true;
                       this.achieve = params.row.achieve;
                       this.courseId = params.row.courseId;
+                      this.studentId = params.row.studentId;
                     }
                   }
                 }, '修改成绩'),
@@ -149,6 +150,14 @@
       //改变页数
       pageChange(val) {
         this.pageNo = val;
+        if(this.level === 1) {
+          this.choiceAchieveList();
+        } else {
+          this.getAchieveList();
+        }
+      },
+
+      getList() {
         if(this.level === 1) {
           this.choiceAchieveList();
         } else {
@@ -192,6 +201,7 @@
           courseId: that.courseId,
           teacherUserId: that.$store.state.loginInfo.userId,
         };
+        console.log(params)
         let data = null;
         that
           .$http(url, params, data, 'get')
@@ -199,6 +209,7 @@
             data = res.data;
             if(data.retCode === 0) {
               that.achieveList = data.data.data;
+              console.log(that.achieveList)
               that.total = data.data.total;
             } else {
               that.$Message.error(data.retMsg);
@@ -213,11 +224,19 @@
       getCourceList() {
         let that = this;
         let url = that.BaseConfig + '/selectCourseAll';
-        let params = {
-          pageNo: that.pageNo1,
-          pageSize: 10,
-          teacherUserId: that.$store.state.loginInfo.userId,
-        };
+        let params;
+        if(that.level === 1) {
+          params = {
+            pageNo: that.pageNo1,
+            pageSize: 10,
+            teacherUserId: that.$store.state.loginInfo.userId,
+          }
+        } else {
+          params = {
+            pageNo: that.pageNo1,
+            pageSize: 10,
+          }
+        }
         let data = null;
         that
           .$http(url, params, data, 'get')
@@ -254,14 +273,16 @@
           studentId: that.studentId,
           teacherId: that.$store.state.loginInfo.userId,
         };
+        console.log(params)
         let data = null;
         that
           .$http(url, params, data, 'get')
           .then(res => {
-            console.log(res)
             data = res.data;
             if(data.retCode === 0) {
-
+              that.$Message.success('评分完成');
+              that.commitModal = false;
+              that.choiceAchieveList();
             } else {
               that.$Message.error(data.retMsg);
             }
@@ -288,7 +309,8 @@
             console.log(res)
             data = res.data;
             if(data.retCode === 0) {
-
+              that.$Message.success('评分完成');
+              that.choiceAchieveList();
             } else {
               that.$Message.error(data.retMsg);
             }
