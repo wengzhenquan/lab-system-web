@@ -72,6 +72,7 @@
       },
 
         methods: {
+          pageChange() {},
           //获取已分配的设备列表
           getDevUseList() {
             let that = this;

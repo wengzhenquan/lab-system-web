@@ -147,13 +147,14 @@
               .$http(url, params, data, 'get')
               .then(res => {
                 data = res.data;
-                if(data.retCode === 0) {
-                  that.devList = data.data.data;
-                  console.log(that.devList)
-                  that.total = data.data.total;
-                } else {
-                  that.$Message.error(data.retMsg);
-                }
+                console.log(data)
+                // if(data.retCode === 0) {
+                //   that.devList = data.data.data;
+                //   console.log(that.devList)
+                //   that.total = data.data.total;
+                // } else {
+                //   that.$Message.error(data.retMsg);
+                // }
               })
               .catch(err => {
                 that.$Message.error('请求错误');

@@ -98,26 +98,28 @@
           {
             title: '申请状态',   // 0 - 审核中，1-已审批， 2-已处理
             render: (h, params) => {
-              return h('div', [
-                h('p', {
-                  style: {
-                    marginRight: '5px',
-                    display: params.row.state === 0? 'block': 'none'
-                  },
-                }, '审核中'),
-                h('p', {
-                  style: {
-                    marginRight: '5px',
-                    display: params.row.state === 1? 'block': 'none'
-                  },
-                }, '已审批'),
-                h('p', {
-                  style: {
-                    marginRight: '5px',
-                    display: params.row.state === 2? 'block': 'none'
-                  },
-                }, '已处理'),
-              ]);
+              console.log(params)
+              // return h('p',params.row)
+              // return h('div', [
+              //   h('p', {
+              //     style: {
+              //       marginRight: '5px',
+              //       display: params.row.state === 0? 'block': 'none'
+              //     },
+              //   }, '审核中'),
+              //   h('p', {
+              //     style: {
+              //       marginRight: '5px',
+              //       display: params.row.state === 1? 'block': 'none'
+              //     },
+              //   }, '已审批'),
+              //   h('p', {
+              //     style: {
+              //       marginRight: '5px',
+              //       display: params.row.state === 2? 'block': 'none'
+              //     },
+              //   }, '已处理'),
+              // ]);
             }
           },
           {
@@ -140,7 +142,7 @@
                   },
                   on: {
                     click: () => {
-
+                      console.log(params.row)
                     }
                   }
                 }, '编辑'),
