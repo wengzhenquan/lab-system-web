@@ -77,7 +77,7 @@
         level: null,
         current: 1,
         labList: [],     //课程列表
-        pageNo: 1,pageNo1: 1,
+        pageNo: 1,
         total: 0,
         columns4: [
           {
